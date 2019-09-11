@@ -1,10 +1,10 @@
 import numpy as np
 import unittest
 import torch
-
+import os
 import heat as ht
 
-ht.use_device('cpu')
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestCommunication(unittest.TestCase):
     @classmethod

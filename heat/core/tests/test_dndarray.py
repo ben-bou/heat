@@ -1,9 +1,10 @@
 import numpy as np
 import torch
 import unittest
-
+import os
 import heat as ht
 
+ht.use_device('cpu')
 
 class TestDNDarray(unittest.TestCase):
     def test_astype(self):

@@ -1,7 +1,8 @@
 import unittest
-
+import os
 import heat as ht
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestDevices(unittest.TestCase):
     def test_get_default_device(self):
