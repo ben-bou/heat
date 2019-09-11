@@ -4,6 +4,7 @@ import torch
 
 import heat as ht
 
+ht.use_device('cpu')
 
 class TestCommunication(unittest.TestCase):
     @classmethod
