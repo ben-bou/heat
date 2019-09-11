@@ -2,9 +2,11 @@ import operator
 
 import torch
 import unittest
+import os
 
 import heat as ht
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestArithmetics(unittest.TestCase):
     @classmethod
