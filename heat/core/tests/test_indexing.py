@@ -1,8 +1,9 @@
 import torch
 import unittest
-
+import os
 import heat as ht
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestIndexing(unittest.TestCase):
     def test_nonzero(self):

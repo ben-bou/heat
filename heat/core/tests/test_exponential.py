@@ -1,9 +1,10 @@
 import unittest
 import torch
-
+import os
 import numpy as np
 import heat as ht
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestExponential(unittest.TestCase):
     def test_exp(self):

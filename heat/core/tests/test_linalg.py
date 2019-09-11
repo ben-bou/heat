@@ -1,9 +1,10 @@
 import torch
 import unittest
-
+import os
 import heat as ht
 import numpy as np
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestLinalg(unittest.TestCase):
     def test_matmul(self):

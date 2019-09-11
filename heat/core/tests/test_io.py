@@ -6,6 +6,7 @@ import unittest
 
 import heat as ht
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestIO(unittest.TestCase):
     @classmethod

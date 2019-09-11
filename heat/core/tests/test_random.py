@@ -1,7 +1,8 @@
 import unittest
-
+import os
 import heat as ht
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestTensor(unittest.TestCase):
     def test_randn(self):

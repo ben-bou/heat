@@ -2,7 +2,9 @@ import unittest
 import torch
 import heat as ht
 import numpy as np
+import os
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestManipulations(unittest.TestCase):
     def test_concatenate(self):

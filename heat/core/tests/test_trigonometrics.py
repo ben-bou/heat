@@ -2,7 +2,9 @@ import torch
 import unittest
 import math
 import heat as ht
+import os
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestTrigonometrics(unittest.TestCase):
     def test_rad2deg(self):

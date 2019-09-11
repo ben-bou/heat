@@ -1,8 +1,9 @@
 import unittest
 import torch
-
+import os
 import heat as ht
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestOperations(unittest.TestCase):
     def test___binary_op_broadcast(self):

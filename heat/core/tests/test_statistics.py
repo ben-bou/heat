@@ -1,10 +1,11 @@
 import torch
 import unittest
 from itertools import combinations
-
+import os
 import heat as ht
 import numpy as np
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestStatistics(unittest.TestCase):
     def test_argmax(self):

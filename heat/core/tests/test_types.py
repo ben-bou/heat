@@ -1,9 +1,10 @@
 import numpy as np
 import torch
 import unittest
-
+import os
 import heat as ht
 
+ht.use_device(os.environ.get('DEVICE'))
 
 class TestTypes(unittest.TestCase):
     def assert_is_heat_type(self, heat_type):
