@@ -27,7 +27,7 @@ class TestArithmetics(unittest.TestCase):
         ])
         cls.a_split_tensor = cls.another_tensor.copy().resplit(0)
         print (torch.tensor([1,2]).device)
-        print (a_tensor.device.device_type)
+        print (cls.a_tensor.device.device_type)
         cls.errorneous_type = (2, 2)
 
     def test_add(self):
