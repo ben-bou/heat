@@ -73,7 +73,7 @@ class TestCommunication(unittest.TestCase):
         # vector heat tensor
         vector_data = ht.arange(1, 10)
         vector_out = ht.zeros_like(vector_data)
-
+        raise TypeError('Wrong device type {}, {}'.format(vector_data.device, vector_out.device))
         # test that target and destination are not equal
         self.assertTrue((vector_data._DNDarray__array != vector_out._DNDarray__array).all())
         self.assertTrue(vector_data._DNDarray__array.is_contiguous())
