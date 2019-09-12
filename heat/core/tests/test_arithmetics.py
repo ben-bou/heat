@@ -31,7 +31,7 @@ class TestArithmetics(unittest.TestCase):
         cls.a_split_tensor = cls.another_tensor.copy().resplit(0)
         
         cls.errorneous_type = (2, 2)
-        raise TypeError('Wrong device type {}, {}'.format(torch.tensor([1,2]).device, cls.a_tensor.device.device_type))
+        raise TypeError('Wrong device type {}, {}'.format(torch.tensor([1,2], device=device).device, cls.a_tensor.device.device_type))
 
     def test_add(self):
         result = ht.array([
