@@ -7,9 +7,7 @@ import unittest
 import heat as ht
 
 ht.use_device(os.environ.get('DEVICE'))
-
-if os.environ.get('DEVICE') == 'gpu':
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class TestIO(unittest.TestCase):
     @classmethod

@@ -7,9 +7,7 @@ import os
 import heat as ht
 
 ht.use_device(os.environ.get('DEVICE'))
-
-if os.environ.get('DEVICE') == 'gpu':
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class TestArithmetics(unittest.TestCase):
     @classmethod
@@ -31,7 +29,6 @@ class TestArithmetics(unittest.TestCase):
         cls.a_split_tensor = cls.another_tensor.copy().resplit(0)
         
         cls.errorneous_type = (2, 2)
-        raise TypeError('Wrong device type {}, {}'.format(torch.tensor([1,2], device=device).device, cls.a_tensor.device.device_type))
 
     def test_add(self):
         result = ht.array([
@@ -376,7 +373,7 @@ class TestArithmetics(unittest.TestCase):
 
         out_noaxis = ht.zeros((3, 3,))
         ht.sum(shape_noaxis, axis=0, out=out_noaxis)
-        self.assertTrue((out_noaxis._DNDarray__array == torch.full((3, 3,), 3)).all())
+        self.assertTrue((out_noaxis._DNDarray__array == torch.full((3, 3,), 3, device=device)).all())
 
         # check sum over all float elements of splitted 5d tensor with negative axis
         shape_noaxis_split_axis_neg = ht.ones((1, 2, 3, 4, 5), split=1)

@@ -5,14 +5,12 @@ import numpy as np
 import heat as ht
 
 ht.use_device(os.environ.get('DEVICE'))
-
-if os.environ.get('DEVICE') == 'gpu':
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class TestExponential(unittest.TestCase):
     def test_exp(self):
         elements = 10
-        tmp = torch.arange(elements, dtype=torch.float64).exp()
+        tmp = torch.arange(elements, dtype=torch.float64, device=device).exp()
         comparison = ht.array(tmp)
 
         # exponential of float32
@@ -51,7 +49,7 @@ class TestExponential(unittest.TestCase):
 
     def test_expm1(self):
         elements = 10
-        tmp = torch.arange(elements, dtype=torch.float64).expm1()
+        tmp = torch.arange(elements, dtype=torch.float64, device=device).expm1()
         comparison = ht.array(tmp)
 
         # expm1onential of float32
@@ -90,7 +88,7 @@ class TestExponential(unittest.TestCase):
 
     def test_exp2(self):
         elements = 10
-        tmp = np.exp2(torch.arange(elements, dtype=torch.float64))
+        tmp = np.exp2(torch.arange(elements, dtype=torch.float64, device=device))
         comparison = ht.array(tmp)
 
         # exponential of float32
@@ -133,7 +131,7 @@ class TestExponential(unittest.TestCase):
 
     def test_log(self):
         elements = 15
-        tmp = torch.arange(1, elements, dtype=torch.float64).log()
+        tmp = torch.arange(1, elements, dtype=torch.float64, device=device).log()
         comparison = ht.array(tmp)
 
         # logarithm of float32
@@ -176,7 +174,7 @@ class TestExponential(unittest.TestCase):
 
     def test_log2(self):
         elements = 15
-        tmp = torch.arange(1, elements, dtype=torch.float64).log2()
+        tmp = torch.arange(1, elements, dtype=torch.float64, device=device).log2()
         comparison = ht.array(tmp)
 
         # logarithm of float32
@@ -219,7 +217,7 @@ class TestExponential(unittest.TestCase):
 
     def test_log10(self):
         elements = 15
-        tmp = torch.arange(1, elements, dtype=torch.float64).log10()
+        tmp = torch.arange(1, elements, dtype=torch.float64, device=device).log10()
         comparison = ht.array(tmp)
 
         # logarithm of float32
@@ -262,7 +260,7 @@ class TestExponential(unittest.TestCase):
 
     def test_log1p(self):
         elements = 15
-        tmp = torch.arange(1, elements, dtype=torch.float64).log1p()
+        tmp = torch.arange(1, elements, dtype=torch.float64, device=device).log1p()
         comparison = ht.array(tmp)
 
         # logarithm of float32
@@ -305,7 +303,7 @@ class TestExponential(unittest.TestCase):
 
     def test_sqrt(self):
         elements = 25
-        tmp = torch.arange(elements, dtype=torch.float64).sqrt()
+        tmp = torch.arange(elements, dtype=torch.float64, device=device).sqrt()
         comparison = ht.array(tmp)
 
         # square roots of float32
@@ -348,7 +346,7 @@ class TestExponential(unittest.TestCase):
 
     def test_sqrt_method(self):
         elements = 25
-        tmp = torch.arange(elements, dtype=torch.float64).sqrt()
+        tmp = torch.arange(elements, dtype=torch.float64, device=device).sqrt()
         comparison = ht.array(tmp)
 
         # square roots of float32
@@ -393,7 +391,7 @@ class TestExponential(unittest.TestCase):
 
         # square roots
         float32_sqrt = ht.sqrt(number_range, out=output_buffer)
-        comparison = torch.arange(elements, dtype=torch.float32).sqrt()
+        comparison = torch.arange(elements, dtype=torch.float32, device=device).sqrt()
 
         # check whether the input range remain unchanged
         self.assertIsInstance(number_range, ht.DNDarray)

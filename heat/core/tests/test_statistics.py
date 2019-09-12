@@ -6,9 +6,7 @@ import heat as ht
 import numpy as np
 
 ht.use_device(os.environ.get('DEVICE'))
-
-if os.environ.get('DEVICE') == 'gpu':
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class TestStatistics(unittest.TestCase):
     def test_argmax(self):

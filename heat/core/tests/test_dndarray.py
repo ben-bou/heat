@@ -5,9 +5,7 @@ import os
 import heat as ht
 
 ht.use_device(os.environ.get('DEVICE'))
-
-if os.environ.get('DEVICE') == 'gpu':
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class TestDNDarray(unittest.TestCase):
     def test_astype(self):
@@ -316,7 +314,7 @@ class TestDNDarray(unittest.TestCase):
         self.assertTrue(data.lshape[1] == 1 or data.lshape[1] == 2)
         self.assertEqual(data.split, 1)
 
-        expected = torch.ones((ht.MPI_WORLD.size, 100), dtype=torch.int64)
+        expected = torch.ones((ht.MPI_WORLD.size, 100), dtype=torch.int64, device=device)
         data = ht.array(expected, split=1)
         data.resplit(None)
 
@@ -326,7 +324,7 @@ class TestDNDarray(unittest.TestCase):
         self.assertEqual(data.dtype, ht.int64)
         self.assertEqual(data._DNDarray__array.dtype, expected.dtype)
 
-        expected = torch.zeros((100, ht.MPI_WORLD.size), dtype=torch.uint8)
+        expected = torch.zeros((100, ht.MPI_WORLD.size), dtype=torch.uint8, device=device)
         data = ht.array(expected, split=0)
         data.resplit(None)
 
@@ -446,7 +444,7 @@ class TestDNDarray(unittest.TestCase):
 
         # setting with torch tensor
         a = ht.zeros((4, 5), split=0)
-        a[1, 0:4] = torch.arange(4)
+        a[1, 0:4] = torch.arange(4, device=device)
         # if a.comm.size == 2:
         for c, i in enumerate(range(4)):
             self.assertEqual(a[1, c], i)
@@ -541,7 +539,7 @@ class TestDNDarray(unittest.TestCase):
 
         # setting with torch tensor
         a = ht.zeros((4, 5), split=1)
-        a[1, 0:4] = torch.arange(4)
+        a[1, 0:4] = torch.arange(4, device=device)
         for c, i in enumerate(range(4)):
             self.assertEqual(a[1, c], i)
 
