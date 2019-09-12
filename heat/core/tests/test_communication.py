@@ -831,7 +831,7 @@ class TestCommunication(unittest.TestCase):
             # contiguous data
             data = ht.ones((1, 7,))
             output = ht.zeros((ht.MPI_WORLD.size, 7,))
-
+            raise TypeError('Wrong device type {}, {}'.format(data.device, output.device))
             # ensure prior invariants
             self.assertTrue(data._DNDarray__array.is_contiguous())
             self.assertTrue(output._DNDarray__array.is_contiguous())
@@ -2059,7 +2059,7 @@ class TestCommunication(unittest.TestCase):
         test2 = self.sorted3Dtensor.copy()
         test3 = self.sorted3Dtensor.copy()
         result = self.sorted3Dtensor.copy()
-
+        raise TypeError('Wrong device type {}, {}'.format(test1.device, test2.device))
         test1.resplit(axis=0)
         test2.resplit(axis=1)
         test3.resplit(axis=2)
