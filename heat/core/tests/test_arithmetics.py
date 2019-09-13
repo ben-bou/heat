@@ -100,7 +100,7 @@ class TestArithmetics(unittest.TestCase):
         result_float = ht.array([1.5])
 
         self.assertTrue(ht.equal(ht.fmod(self.a_scalar, self.a_scalar), ht.float32([0.0])))
-        raise TypeError("0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7:{}".format(self.a_scalar, ht.array([2]), ht.array([2.0]), ht.array([2.0,2.0]), ht.array([self.a_scalar]), ht.fmod(self.a_scalar, self.a_scalar), ht.float32([0.0,0.0]), zero_tensor))
+        raise TypeError("0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7:{}".format(self.a_scalar, ht.array([2]), ht.array([[2.0],[2.0]]), ht.array([[2.0,2.0],[2.0,2.0]]), ht.array([self.a_scalar]), ht.fmod(self.a_scalar, self.a_scalar), ht.float32([0.0,0.0]), zero_tensor))
         self.assertTrue(ht.equal(ht.fmod(self.a_tensor, self.a_tensor), zero_tensor))
         self.assertTrue(ht.equal(ht.fmod(self.a_tensor, self.an_int_scalar), result))
         self.assertTrue(ht.equal(ht.fmod(self.a_tensor, self.another_tensor), result))
