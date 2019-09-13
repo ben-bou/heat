@@ -1,4 +1,4 @@
-import unittest
+""" import unittest
 import os
 import heat as ht
 
@@ -62,3 +62,4 @@ class TestStrideTricks(unittest.TestCase):
             ht.core.stride_tricks.sanitize_shape(1.0)
         with self.assertRaises(TypeError):
             ht.core.stride_tricks.sanitize_shape((1, 1.0,))
+ """

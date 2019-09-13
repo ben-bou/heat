@@ -1,4 +1,4 @@
-import unittest
+""" import unittest
 import torch
 import os
 import heat as ht
@@ -844,3 +844,4 @@ class TestFactories(unittest.TestCase):
             ht.zeros_like(ones, dtype='abc')
         with self.assertRaises(TypeError):
             ht.zeros_like(ones, split='axis')
+ """
