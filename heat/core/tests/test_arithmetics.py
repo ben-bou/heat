@@ -6,8 +6,9 @@ import os
 
 import heat as ht
 
-ht.use_device(os.environ.get('DEVICE'))
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if os.environ.get('DEVICE') == 'gpu':
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ht.use_device(os.environ.get('DEVICE') if torch.cuda.is_available() else "cpu")
 
 class TestArithmetics(unittest.TestCase):
     @classmethod
@@ -99,10 +100,8 @@ class TestArithmetics(unittest.TestCase):
         another_float = ht.array([1.9])
         result_float = ht.array([1.5])
 
-        baba = ht.array([2])
-
         self.assertTrue(ht.equal(ht.fmod(self.a_scalar, self.a_scalar), ht.float32([0.0])))
-        raise TypeError("0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7:{}".format(self.a_scalar, baba, ht.array([[2.0],[2.0]]), ht.array([[2.0,2.0],[2.0,2.0]]), ht.array([self.a_scalar]), ht.fmod(self.a_scalar, self.a_scalar), ht.float32([0.0,0.0]), zero_tensor))
+        raise TypeError("0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7:{}".format(self.a_scalar, a_float, ht.array([[2.0],[2.0]]), result, ht.array([self.a_scalar]), ht.fmod(self.a_scalar, self.a_scalar), ht.float32([0.0,0.0]), zero_tensor))
         self.assertTrue(ht.equal(ht.fmod(self.a_tensor, self.a_tensor), zero_tensor))
         self.assertTrue(ht.equal(ht.fmod(self.a_tensor, self.an_int_scalar), result))
         self.assertTrue(ht.equal(ht.fmod(self.a_tensor, self.another_tensor), result))
