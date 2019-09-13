@@ -1,4 +1,4 @@
-import sys
+""" import sys
 
 import heat as ht
 
@@ -47,3 +47,4 @@ class KMeans:
                 break
 
         return centroids
+ """
