@@ -44,7 +44,7 @@ class TestCommunication(unittest.TestCase):
         self.assertIsInstance(chunks, tuple)
         self.assertEqual(len(chunks), len(self.data.shape))
         self.assertEqual(1, (self.data == self.data[chunks]).all().item())
-""" 
+
     def test_mpi_communicator(self):
         comm = ht.core.communication.MPI_WORLD
         self.assertLess(comm.rank, comm.size)
@@ -70,7 +70,7 @@ class TestCommunication(unittest.TestCase):
     def test_cuda_aware_mpi(self):
         self.assertTrue(hasattr(ht.communication, 'CUDA_AWARE_MPI'))
         self.assertIsInstance(ht.communication.CUDA_AWARE_MPI, bool)
-
+"""
     def test_contiguous_memory_buffer(self):
         # vector heat tensor
         vector_data = ht.arange(1, 10)
