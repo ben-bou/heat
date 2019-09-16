@@ -84,7 +84,7 @@ class TestCommunication(unittest.TestCase):
         # send message to self that is received into a separate buffer afterwards
         vector_data.comm.Isend(vector_data, dest=vector_data.comm.rank)
         vector_out.comm.Recv(vector_out, source=vector_out.comm.rank)
-
+        raise TypeError('Wrong device type {}, {}'.format(vector_data, vector_out))
         # check that after sending the data everything is equal
         self.assertTrue((vector_data._DNDarray__array == vector_out._DNDarray__array).all())
         self.assertTrue(vector_out._DNDarray__array.is_contiguous())
