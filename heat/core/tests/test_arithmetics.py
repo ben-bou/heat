@@ -9,6 +9,7 @@ import heat as ht
 if os.environ.get('DEVICE') == 'gpu':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
+    torch.cuda.device(device)
 
 class TestArithmetics(unittest.TestCase):
     @classmethod
