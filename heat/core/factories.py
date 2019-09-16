@@ -286,8 +286,8 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
         gshape[is_split] = ttl_shape[is_split]
         split = is_split
 
-        if device is ht.gpu:
-            obj = obj.to(torch.device(ht.gpu.torch_device))
+        if device == ht.gpu and obj.device is not torch.device("cuda"):
+            obj = obj.to(ht.gpu.torch_device)
 
     return dndarray.DNDarray(obj, tuple(int(ele) for ele in gshape), dtype, split, device, comm)
 
