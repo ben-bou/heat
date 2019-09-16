@@ -70,7 +70,7 @@ class TestCommunication(unittest.TestCase):
     def test_cuda_aware_mpi(self):
         self.assertTrue(hasattr(ht.communication, 'CUDA_AWARE_MPI'))
         self.assertIsInstance(ht.communication.CUDA_AWARE_MPI, bool)
-"""
+
     def test_contiguous_memory_buffer(self):
         # vector heat tensor
         vector_data = ht.arange(1, 10)
@@ -106,7 +106,7 @@ class TestCommunication(unittest.TestCase):
         # check that after sending the data everything is equal
         self.assertTrue((tensor_data == tensor_out).all())
         self.assertTrue(tensor_out.is_contiguous())
-
+"""
     def test_non_contiguous_memory_buffer(self):
         # non-contiguous source
         non_contiguous_data = ht.ones((3, 2,)).T
