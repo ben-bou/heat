@@ -219,7 +219,9 @@ class MPICommunication(Communication):
             The MPI memory objects of the passed tensor.
         """
         # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
-        pointer = obj.data_ptr() if CUDA_AWARE_MPI else obj.cpu().data_ptr()
+        if not CUDA_AWARE_MPI:
+            obj = obj.cpu()
+        pointer = obj.data_ptr()
         pointer += obj.storage_offset()
 
         return MPI.memory.fromaddress(pointer, 0)
