@@ -219,9 +219,7 @@ class MPICommunication(Communication):
             The MPI memory objects of the passed tensor.
         """
         # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
-        if not CUDA_AWARE_MPI:
-            obj = obj.cpu()
-        pointer = obj.data_ptr()
+        pointer = obj.data_ptr() if CUDA_AWARE_MPI else obj.cpu().data_ptr()
         pointer += obj.storage_offset()
 
         return MPI.memory.fromaddress(pointer, 0)
@@ -357,8 +355,12 @@ class MPICommunication(Communication):
             buf = buf._DNDarray__array
         if not isinstance(buf, torch.Tensor):
             return self.handle.Recv(buf, source, tag, status)  
- 
-        return self.handle.Recv(self.as_buffer(buf), source, tag, status)     
+        
+        obj = buf if CUDA_AWARE_MPI else buf.cpu()
+        ret = self.handle.Recv(self.as_buffer(obj), source, tag, status) 
+        if not CUDA_AWARE_MPI:
+            buf = obj.cuda()
+        return ret     
     Recv.__doc__ = MPI.Comm.Recv.__doc__
 
     def __send_like(self, func, buf, dest, tag):
