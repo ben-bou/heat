@@ -265,7 +265,7 @@ class MPICommunication(Communication):
         # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
         obj = obj if CUDA_AWARE_MPI else obj.cpu()
         pointer = obj.data_ptr()
-        pointer += obj.storage_offset(), obj
+        pointer += obj.storage_offset()
 
         return MPI.memory.fromaddress(pointer, 0), obj
 
