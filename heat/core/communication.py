@@ -417,6 +417,7 @@ class MPICommunication(Communication):
         if not isinstance(buf, torch.Tensor):
             return func(buf, dest, tag)
 
+        raise TypeError("{}".format(buf))
         return func(self.as_buffer(buf), dest, tag)
 
     def Bsend(self, buf, dest, tag=0):
