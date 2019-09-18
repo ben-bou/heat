@@ -403,8 +403,8 @@ class MPICommunication(Communication):
         
         #ten = obj if CUDA_AWARE_MPI else obj.cpu()
         #ret = self.handle.Recv(self.as_buffer(ten), source, tag, status)
-        msg, ten = self.as_buffer(obj)
-        self.handle.Recv(msg, source, tag, status)
+        msg, ten = self.as_buffer_recv(obj)
+        ret = self.handle.Recv(msg, source, tag, status)
         if obj.is_cuda:
             buf._DNDarray__array = ten.cuda()
         return ret     
