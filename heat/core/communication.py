@@ -351,8 +351,7 @@ class MPICommunication(Communication):
     Irecv.__doc__ = MPI.Comm.Irecv.__doc__
 
     def Recv(self, buf, source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=None):
-        if isinstance(buf, dndarray.DNDarray):
-            obj = buf._DNDarray__array
+        obj = buf._DNDarray__array if isinstance(buf, dndarray.DNDarray) else buf
         if not isinstance(obj, torch.Tensor):
             return self.handle.Recv(obj, source, tag, status)  
         
