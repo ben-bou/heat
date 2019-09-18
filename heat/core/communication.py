@@ -405,9 +405,10 @@ class MPICommunication(Communication):
         #ret = self.handle.Recv(self.as_buffer(ten), source, tag, status)
         msg, ten = self.as_buffer_recv(obj)
         ret = self.handle.Recv(msg, source, tag, status)
+        raise TypeError("{}".format(ten))
         if obj.is_cuda:
             buf._DNDarray__array = ten.cuda()
-        return ret     
+        return ret
     Recv.__doc__ = MPI.Comm.Recv.__doc__
 
     def __send_like(self, func, buf, dest, tag):
