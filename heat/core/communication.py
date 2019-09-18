@@ -247,7 +247,7 @@ class MPICommunication(Communication):
 
         return [cls.as_mpi_memory(obj), elements, mpi_type]
 
-        @classmethod
+    @classmethod
     def as_mpi_memory_recv(cls, obj):
         """
         Converts the passed Torch tensor into an MPI compatible memory view.
@@ -267,7 +267,7 @@ class MPICommunication(Communication):
         pointer = obj.data_ptr()
         pointer += obj.storage_offset(), obj
 
-        return MPI.memory.fromaddress(pointer, 0), 
+        return MPI.memory.fromaddress(pointer, 0), obj
 
     @classmethod
     def as_buffer_recv(cls, obj, counts=None, displs=None):
