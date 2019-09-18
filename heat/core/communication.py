@@ -244,7 +244,7 @@ class MPICommunication(Communication):
             The buffer information of the passed tensor, ready to be passed as MPI send or receive buffer.
         """
         mpi_type, elements = cls.mpi_type_and_elements_of(obj, counts, displs)
-
+        raise TypeError("{}".format(obj))
         return [cls.as_mpi_memory(obj), elements, mpi_type]
 
     @classmethod
@@ -417,7 +417,6 @@ class MPICommunication(Communication):
         if not isinstance(buf, torch.Tensor):
             return func(buf, dest, tag)
 
-        raise TypeError("{}".format(buf))
         return func(self.as_buffer(buf), dest, tag)
 
     def Bsend(self, buf, dest, tag=0):
