@@ -352,14 +352,14 @@ class MPICommunication(Communication):
 
     def Recv(self, buf, source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=None):
         if isinstance(buf, dndarray.DNDarray):
-            ten = buf._DNDarray__array
-        if not isinstance(buf, torch.Tensor):
-            return self.handle.Recv(buf, source, tag, status)  
+            obj = buf._DNDarray__array
+        if not isinstance(obj, torch.Tensor):
+            return self.handle.Recv(obj, source, tag, status)  
         
-        obj = ten if CUDA_AWARE_MPI else ten.cpu()
-        ret = self.handle.Recv(self.as_buffer(obj), source, tag, status) 
-        if ten.is_cuda() and not CUDA_AWARE_MPI:
-            buf._DNDarray_ = obj.cuda()
+        ten = obj if CUDA_AWARE_MPI else obj.cpu()
+        ret = self.handle.Recv(self.as_buffer(ten), source, tag, status) 
+        if obj.is_cuda():
+            buf._DNDarray__array = ten.cuda()
         return ret     
     Recv.__doc__ = MPI.Comm.Recv.__doc__
 
