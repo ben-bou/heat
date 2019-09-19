@@ -417,7 +417,9 @@ class MPICommunication(Communication):
         if not isinstance(buf, torch.Tensor):
             return func(buf, dest, tag)
 
-        return func(self.as_buffer(buf), dest, tag)
+        msg, ten = self.as_buffer_recv(buf)
+        ret = func(msg, dest, tag)
+        return ret
 
     def Bsend(self, buf, dest, tag=0):
         return self.__send_like(self.handle.Bsend, buf, dest, tag)
