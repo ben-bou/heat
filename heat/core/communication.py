@@ -218,8 +218,8 @@ class MPICommunication(Communication):
         mpi_memory : MPI.memory
             The MPI memory objects of the passed tensor.
         """
-        # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
-        pointer = obj.data_ptr() if CUDA_AWARE_MPI else obj.cpu().data_ptr()
+        
+        pointer = obj.data_ptr()
         pointer += obj.storage_offset()
 
         return MPI.memory.fromaddress(pointer, 0)
@@ -246,52 +246,6 @@ class MPICommunication(Communication):
         mpi_type, elements = cls.mpi_type_and_elements_of(obj, counts, displs)
     
         return [cls.as_mpi_memory(obj), elements, mpi_type]
-
-    @classmethod
-    def as_mpi_memory_recv(cls, obj):
-        """
-        Converts the passed Torch tensor into an MPI compatible memory view.
-
-        Parameters
-        ----------
-        obj : torch.Tensor
-            The tensor to be converted into a MPI memory view.
-
-        Returns
-        -------
-        mpi_memory : MPI.memory
-            The MPI memory objects of the passed tensor.
-        """
-        # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
-        obj = obj if CUDA_AWARE_MPI else obj.cpu()
-        pointer = obj.data_ptr()
-        pointer += obj.storage_offset()
-
-        return MPI.memory.fromaddress(pointer, 0), obj
-
-    @classmethod
-    def as_buffer_recv(cls, obj, counts=None, displs=None):
-        """
-        Converts a passed torch tensor into a memory buffer object with associated number of elements and MPI data type.
-
-        Parameters
-        ----------
-        obj : torch.Tensor
-            The object to be converted into a buffer representation.
-        counts : tuple of ints, optional
-            Optional counts arguments for variable MPI-calls (e.g. Alltoallv)
-        displs : tuple of ints, optional
-            Optional displacements arguments for variable MPI-calls (e.g. Alltoallv)
-
-        Returns
-        -------
-        buffer : list[MPI.memory, int, MPI.Datatype] or list[MPI.memory, tuple of int, MPI.Datatype]
-            The buffer information of the passed tensor, ready to be passed as MPI send or receive buffer.
-        """
-        mpi_type, elements = cls.mpi_type_and_elements_of(obj, counts, displs)
-        address, obj = cls.as_mpi_memory_recv(obj)
-
-        return [address, elements, mpi_type], obj
 
     def alltoall_sendbuffer(self, obj):
         """
@@ -401,11 +355,9 @@ class MPICommunication(Communication):
         if not isinstance(obj, torch.Tensor):
             return self.handle.Recv(obj, source, tag, status)  
         
-        #ten = obj if CUDA_AWARE_MPI else obj.cpu()
-        #ret = self.handle.Recv(self.as_buffer(ten), source, tag, status)
-        msg, ten = self.as_buffer_recv(obj)
-        ret = self.handle.Recv(msg, source, tag, status)
-        raise TypeError("{}".format(ten))
+        # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
+        ten = obj if CUDA_AWARE_MPI else obj.cpu()
+        ret = self.handle.Recv(self.as_buffer(ten), source, tag, status)
         if obj.is_cuda:
             buf._DNDarray__array = ten.cuda()
         return ret
@@ -417,8 +369,9 @@ class MPICommunication(Communication):
         if not isinstance(buf, torch.Tensor):
             return func(buf, dest, tag)
 
-        msg, ten = self.as_buffer_recv(buf)
-        ret = func(msg, dest, tag)
+        # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
+        ten = buf if CUDA_AWARE_MPI else buf.cpu()
+        ret = func(self.as_buffer(ten), dest, tag)
         return ret
 
     def Bsend(self, buf, dest, tag=0):
