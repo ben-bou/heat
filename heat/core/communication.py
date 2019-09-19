@@ -222,7 +222,7 @@ class MPICommunication(Communication):
         pointer = obj.data_ptr() if CUDA_AWARE_MPI else obj.cpu().data_ptr()
         pointer += obj.storage_offset()
 
-        return MPI.memory.fromaddress(pointer, torch.numel(obj) * obj.element_size())
+        return MPI.memory.fromaddress(pointer, 0)
 
     @classmethod
     def as_buffer(cls, obj, counts=None, displs=None):
@@ -267,7 +267,7 @@ class MPICommunication(Communication):
         pointer = obj.data_ptr()
         pointer += obj.storage_offset()
 
-        return MPI.memory.fromaddress(pointer, torch.numel(obj) * obj.element_size()), obj
+        return MPI.memory.fromaddress(pointer, 0), obj
 
     @classmethod
     def as_buffer_recv(cls, obj, counts=None, displs=None):
