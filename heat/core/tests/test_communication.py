@@ -106,7 +106,7 @@ class TestCommunication(unittest.TestCase):
         # check that after sending the data everything is equal
         self.assertTrue((tensor_data == tensor_out).all())
         self.assertTrue(tensor_out.is_contiguous())
-"""
+
     def test_non_contiguous_memory_buffer(self):
         # non-contiguous source
         non_contiguous_data = ht.ones((3, 2,)).T
@@ -178,7 +178,7 @@ class TestCommunication(unittest.TestCase):
         # test for proper sanitation
         with self.assertRaises(TypeError):
             ht.use_comm('1')
-
+"""
     def test_allgather(self):
         # contiguous data
         data = ht.ones((1, 7,))
