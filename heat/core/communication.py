@@ -343,11 +343,17 @@ class MPICommunication(Communication):
 
     def Irecv(self, buf, source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG):
         if isinstance(buf, dndarray.DNDarray):
-            buf = buf._DNDarray__array
+            obj = buf._DNDarray__array if isinstance(buf, dndarray.DNDarray) else buf
         if not isinstance(buf, torch.Tensor):
             return self.handle.Irecv(buf, source, tag)
-
-        return self.handle.Irecv(self.as_buffer(buf), source, tag)
+        
+        # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
+        ten = obj if CUDA_AWARE_MPI else obj.cpu()
+        ret = self.handle.Irecv(self.as_buffer(ten), source, tag)
+        if not CUDA_AWARE_MPI and obj.is_cuda:
+            return ret, ten
+        
+        return ret
     Irecv.__doc__ = MPI.Comm.Irecv.__doc__
 
     def Recv(self, buf, source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=None):
@@ -372,10 +378,15 @@ class MPICommunication(Communication):
         # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
         ten = buf if CUDA_AWARE_MPI else buf.cpu()
         ret = func(self.as_buffer(ten), dest, tag)
+        
+        if not CUDA_AWARE_MPI and buf.is_cuda:
+            return ret, ten
+        
         return ret
 
     def Bsend(self, buf, dest, tag=0):
-        return self.__send_like(self.handle.Bsend, buf, dest, tag)
+        ret, ten = self.__send_like(self.handle.Bsend, buf, dest, tag)
+        return ret
     Bsend.__doc__ = MPI.Comm.Bsend.__doc__
 
     def Ibsend(self, buf, dest, tag=0):
@@ -395,15 +406,18 @@ class MPICommunication(Communication):
     Issend.__doc__ = MPI.Comm.Issend.__doc__
 
     def Rsend(self, buf, dest, tag=0):
-        return self.__send_like(self.handle.Rsend, buf, dest, tag)
+        ret, ten = self.__send_like(self.handle.Rsend, buf, dest, tag)
+        return ret
     Rsend.__doc__ = MPI.Comm.Rsend.__doc__
 
     def Ssend(self, buf, dest, tag=0):
-        return self.__send_like(self.handle.Ssend, buf, dest, tag)
+        ret, ten = self.__send_like(self.handle.Ssend, buf, dest, tag)
+        return ret
     Ssend.__doc__ = MPI.Comm.Ssend.__doc__
 
     def Send(self, buf, dest, tag=0):
-        return self.__send_like(self.handle.Send, buf, dest, tag)
+        ret, ten = self.__send_like(self.handle.Send, buf, dest, tag)
+        return ret
     Send.__doc__ = MPI.Comm.Send.__doc__
 
     def __broadcast_like(self, func, buf, root):

@@ -70,7 +70,6 @@ class TestCommunication(unittest.TestCase):
     def test_cuda_aware_mpi(self):
         self.assertTrue(hasattr(ht.communication, 'CUDA_AWARE_MPI'))
         self.assertIsInstance(ht.communication.CUDA_AWARE_MPI, bool)
-        raise TypeError('{}'.format(ht.communication.CUDA_AWARE_MPI))
 
     def test_contiguous_memory_buffer(self):
         # vector heat tensor
