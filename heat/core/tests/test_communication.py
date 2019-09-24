@@ -82,8 +82,10 @@ class TestCommunication(unittest.TestCase):
         self.assertTrue(vector_out._DNDarray__array.is_contiguous())
 
         # send message to self that is received into a separate buffer afterwards
-        vector_data.comm.Isend(vector_data, dest=vector_data.comm.rank)
+        req = vector_data.comm.Isend(vector_data, dest=vector_data.comm.rank)
         vector_out.comm.Recv(vector_out, source=vector_out.comm.rank)
+        
+        req.Wait()
         
         # check that after sending the data everything is equal
         self.assertTrue((vector_data._DNDarray__array == vector_out._DNDarray__array).all())
@@ -100,8 +102,10 @@ class TestCommunication(unittest.TestCase):
 
         # send message to self that is received into a separate buffer afterwards
         comm = ht.core.communication.MPI_WORLD
-        comm.Isend(tensor_data, dest=comm.rank)
+        req = comm.Isend(tensor_data, dest=comm.rank)
         comm.Recv(tensor_out, source=comm.rank)
+
+        req.Wait()
 
         # check that after sending the data everything is equal
         self.assertTrue((tensor_data == tensor_out).all())

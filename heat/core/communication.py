@@ -345,15 +345,16 @@ class MPICommunication(Communication):
         if isinstance(buf, dndarray.DNDarray):
             obj = buf._DNDarray__array if isinstance(buf, dndarray.DNDarray) else buf
         if not isinstance(buf, torch.Tensor):
-            return self.handle.Irecv(buf, source, tag)
+            return MPIRequest(self.handle.Irecv(buf, source, tag))
         
         # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
         ten = obj if CUDA_AWARE_MPI else obj.cpu()
         ret = self.handle.Irecv(self.as_buffer(ten), source, tag)
-        if not CUDA_AWARE_MPI and obj.is_cuda:
-            return ret, ten
         
-        return ret
+        if not CUDA_AWARE_MPI and obj.is_cuda:
+            return MPIRequest(ret, None, ten, buf)
+        
+        return MPIRequest(ret)
     Irecv.__doc__ = MPI.Comm.Irecv.__doc__
 
     def Recv(self, buf, source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=None):
@@ -364,7 +365,8 @@ class MPICommunication(Communication):
         # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
         ten = obj if CUDA_AWARE_MPI else obj.cpu()
         ret = self.handle.Recv(self.as_buffer(ten), source, tag, status)
-        if obj.is_cuda:
+        
+        if not CUDA_AWARE_MPI and obj.is_cuda:
             buf._DNDarray__array = ten.cuda()
         return ret
     Recv.__doc__ = MPI.Comm.Recv.__doc__
@@ -373,69 +375,74 @@ class MPICommunication(Communication):
         if isinstance(buf, dndarray.DNDarray):
             buf = buf._DNDarray__array
         if not isinstance(buf, torch.Tensor):
-            return func(buf, dest, tag)
+            return func(buf, dest, tag), None
 
         # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
         ten = buf if CUDA_AWARE_MPI else buf.cpu()
         ret = func(self.as_buffer(ten), dest, tag)
         
-        if not CUDA_AWARE_MPI and buf.is_cuda:
-            return ret, ten
-        
-        return ret
+        return ret, ten
 
     def Bsend(self, buf, dest, tag=0):
-        ret, ten = self.__send_like(self.handle.Bsend, buf, dest, tag)
-        return ret
+        return self.__send_like(self.handle.Bsend, buf, dest, tag)[0]
     Bsend.__doc__ = MPI.Comm.Bsend.__doc__
 
     def Ibsend(self, buf, dest, tag=0):
-        return self.__send_like(self.handle.Ibsend, buf, dest, tag)
+        req, tensor = self.__send_like(self.handle.Ibsend, buf, dest, tag)
+        return MPIRequest(req, tensor)
     Ibsend.__doc__ = MPI.Comm.Ibsend.__doc__
 
     def Irsend(self, buf, dest, tag=0):
-        return self.__send_like(self.handle.Irsend, buf, dest, tag)
+        req, tensor = self.__send_like(self.handle.Irsend, buf, dest, tag)
+        return MPIRequest(req, tensor)
     Irsend.__doc__ = MPI.Comm.Irsend.__doc__
 
     def Isend(self, buf, dest, tag=0):
-        return self.__send_like(self.handle.Isend, buf, dest, tag)
+        req, tensor = self.__send_like(self.handle.Isend, buf, dest, tag)
+        return MPIRequest(req, tensor)
     Isend.__doc__ = MPI.Comm.Isend.__doc__
 
     def Issend(self, buf, dest, tag=0):
-        return self.__send_like(self.handle.Issend, buf, dest, tag)
+        req, tensor = self.__send_like(self.handle.Issend, buf, dest, tag)
+        return MPIRequest(req, tensor)
     Issend.__doc__ = MPI.Comm.Issend.__doc__
 
     def Rsend(self, buf, dest, tag=0):
-        ret, ten = self.__send_like(self.handle.Rsend, buf, dest, tag)
-        return ret
+        return self.__send_like(self.handle.Rsend, buf, dest, tag)[0]
     Rsend.__doc__ = MPI.Comm.Rsend.__doc__
 
     def Ssend(self, buf, dest, tag=0):
-        ret, ten = self.__send_like(self.handle.Ssend, buf, dest, tag)
-        return ret
+        return self.__send_like(self.handle.Ssend, buf, dest, tag)[0]
     Ssend.__doc__ = MPI.Comm.Ssend.__doc__
 
     def Send(self, buf, dest, tag=0):
-        ret, ten = self.__send_like(self.handle.Send, buf, dest, tag)
-        return ret
+        return self.__send_like(self.handle.Send, buf, dest, tag)[0]
     Send.__doc__ = MPI.Comm.Send.__doc__
 
     def __broadcast_like(self, func, buf, root):
         # unpack the buffer if it is a HeAT tensor
-        if isinstance(buf, dndarray.DNDarray):
-            buf = buf._DNDarray__array
+        obj = buf._DNDarray__array if isinstance(buf, dndarray.DNDarray) else buf
+
         # convert torch tensors to MPI memory buffers
         if not isinstance(buf, torch.Tensor):
-            return func(buf, root)
+            return func(buf, root), None, None
 
-        return func(self.as_buffer(buf), root)
+        # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
+        ten = obj if CUDA_AWARE_MPI else obj.cpu()
+        ret = func(self.as_buffer(ten), root)
+
+        if not CUDA_AWARE_MPI and obj.is_cuda:
+            return ret, ten, buf
+        
+        return ret, None, None
 
     def Bcast(self, buf, root=0):
-        return self.__broadcast_like(self.handle.Bcast, buf, root)
+        return self.__broadcast_like(self.handle.Bcast, buf, root)[0]
     Bcast.__doc__ = MPI.Comm.Bcast.__doc__
 
     def Ibcast(self, buf, root=0):
-        return self.__broadcast_like(self.handle.Ibcast, buf, root)
+        req, tensor, array = self.__broadcast_like(self.handle.Ibcast, buf, root)
+        return MPIRequest(req, None, tensor, array)
     Ibcast.__doc__ = MPI.Comm.Ibcast.__doc__
 
     def __reduce_like(self, func, sendbuf, recvbuf, *args, **kwargs):
@@ -870,6 +877,36 @@ class MPICommunication(Communication):
             The handle's method
         """
         return getattr(self.handle, name)
+
+class MPIRequest:
+    def __init__(self, handle, sendbuf=None, recvbuf=None, array=None):
+        self.handle = handle
+        self.array = array
+        self.recvbuf = recvbuf
+        self.sendbuf = sendbuf
+    
+    def Wait(self, status=None):
+        self.handle.Wait(status)
+        if self.array is not None:
+            self.array._DNDarray__array = self.recvbuf.cuda()
+
+    
+    def __getattr__(self, name):
+        """
+        Default pass-through for the communicator methods.
+
+        Parameters
+        ----------
+        name : str
+            The name of the method to be called.
+
+        Returns
+        -------
+        method : function
+            The handle's method
+        """
+        return getattr(self.handle, name)
+
 
 
 MPI_WORLD = MPICommunication()
