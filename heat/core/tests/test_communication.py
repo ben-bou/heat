@@ -129,7 +129,7 @@ class TestCommunication(unittest.TestCase):
 
         # check that after sending the data everything is equal
         self.assertTrue((non_contiguous_data._DNDarray__array == contiguous_out._DNDarray__array).all())
-        if ht.get_device().device_type() == 'cpu' or ht.communication.CUDA_AWARE_MPI:
+        if ht.get_device().device_type == 'cpu' or ht.communication.CUDA_AWARE_MPI:
                 self.assertTrue(contiguous_out._DNDarray__array.is_contiguous())
 
         # non-contiguous destination
@@ -148,7 +148,7 @@ class TestCommunication(unittest.TestCase):
         req.Wait()
         # check that after sending the data everything is equal
         self.assertTrue((contiguous_data._DNDarray__array == non_contiguous_out._DNDarray__array).all())
-        if ht.get_device().device_type() == 'cpu' or ht.communication.CUDA_AWARE_MPI:
+        if ht.get_device().device_type == 'cpu' or ht.communication.CUDA_AWARE_MPI:
             self.assertFalse(non_contiguous_out._DNDarray__array.is_contiguous())
 
         # non-contiguous destination
@@ -167,7 +167,7 @@ class TestCommunication(unittest.TestCase):
         req.Wait()
         # check that after sending the data everything is equal
         self.assertTrue((both_non_contiguous_data._DNDarray__array == both_non_contiguous_out._DNDarray__array).all())
-        if ht.get_device().device_type() == 'cpu' or ht.communication.CUDA_AWARE_MPI:
+        if ht.get_device().device_type == 'cpu' or ht.communication.CUDA_AWARE_MPI:
             self.assertFalse(both_non_contiguous_out._DNDarray__array.is_contiguous())
 
     def test_default_comm(self):
