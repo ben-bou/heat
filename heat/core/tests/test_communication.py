@@ -122,12 +122,15 @@ class TestCommunication(unittest.TestCase):
         self.assertTrue(contiguous_out._DNDarray__array.is_contiguous())
 
         # send message to self that is received into a separate buffer afterwards
-        non_contiguous_data.comm.Isend(non_contiguous_data, dest=non_contiguous_data.comm.rank)
+        req = non_contiguous_data.comm.Isend(non_contiguous_data, dest=non_contiguous_data.comm.rank)
         contiguous_out.comm.Recv(contiguous_out, source=contiguous_out.comm.rank)
+
+        req.Wait()
 
         # check that after sending the data everything is equal
         self.assertTrue((non_contiguous_data._DNDarray__array == contiguous_out._DNDarray__array).all())
-        self.assertTrue(contiguous_out._DNDarray__array.is_contiguous())
+        if ht.get_device().device_type() == 'cpu' or ht.communication.CUDA_AWARE_MPI:
+                self.assertTrue(contiguous_out._DNDarray__array.is_contiguous())
 
         # non-contiguous destination
         contiguous_data = ht.ones((3, 2,))
@@ -139,12 +142,14 @@ class TestCommunication(unittest.TestCase):
         self.assertFalse(non_contiguous_out._DNDarray__array.is_contiguous())
 
         # send message to self that is received into a separate buffer afterwards
-        contiguous_data.comm.Isend(contiguous_data, dest=contiguous_data.comm.rank)
+        req = contiguous_data.comm.Isend(contiguous_data, dest=contiguous_data.comm.rank)
         non_contiguous_out.comm.Recv(non_contiguous_out, source=non_contiguous_out.comm.rank)
 
+        req.Wait()
         # check that after sending the data everything is equal
         self.assertTrue((contiguous_data._DNDarray__array == non_contiguous_out._DNDarray__array).all())
-        self.assertFalse(non_contiguous_out._DNDarray__array.is_contiguous())
+        if ht.get_device().device_type() == 'cpu' or ht.communication.CUDA_AWARE_MPI:
+            self.assertFalse(non_contiguous_out._DNDarray__array.is_contiguous())
 
         # non-contiguous destination
         both_non_contiguous_data = ht.ones((3, 2,)).T
@@ -156,12 +161,14 @@ class TestCommunication(unittest.TestCase):
         self.assertFalse(both_non_contiguous_out._DNDarray__array.is_contiguous())
 
         # send message to self that is received into a separate buffer afterwards
-        both_non_contiguous_data.comm.Isend(both_non_contiguous_data, dest=both_non_contiguous_data.comm.rank)
+        req = both_non_contiguous_data.comm.Isend(both_non_contiguous_data, dest=both_non_contiguous_data.comm.rank)
         both_non_contiguous_out.comm.Recv(both_non_contiguous_out, source=both_non_contiguous_out.comm.rank)
 
+        req.Wait()
         # check that after sending the data everything is equal
         self.assertTrue((both_non_contiguous_data._DNDarray__array == both_non_contiguous_out._DNDarray__array).all())
-        self.assertFalse(both_non_contiguous_out._DNDarray__array.is_contiguous())
+        if ht.get_device().device_type() == 'cpu' or ht.communication.CUDA_AWARE_MPI:
+            self.assertFalse(both_non_contiguous_out._DNDarray__array.is_contiguous())
 
     def test_default_comm(self):
         # default comm is world
