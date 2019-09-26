@@ -342,8 +342,7 @@ class MPICommunication(Communication):
 
 
     def Irecv(self, buf, source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG):
-        if isinstance(buf, dndarray.DNDarray):
-            obj = buf._DNDarray__array if isinstance(buf, dndarray.DNDarray) else buf
+        obj = buf._DNDarray__array if isinstance(buf, dndarray.DNDarray) else buf
         if not isinstance(buf, torch.Tensor):
             return MPIRequest(self.handle.Irecv(buf, source, tag))
         
@@ -366,7 +365,7 @@ class MPICommunication(Communication):
         ten = obj if CUDA_AWARE_MPI else obj.cpu()
         ret = self.handle.Recv(self.as_buffer(ten), source, tag, status)
         
-        if not CUDA_AWARE_MPI and obj.is_cuda:
+        if isinstance(buf, dndarray.DNDarray) and not CUDA_AWARE_MPI and obj.is_cuda:
             buf._DNDarray__array = ten.cuda()
         return ret
     Recv.__doc__ = MPI.Comm.Recv.__doc__
@@ -446,6 +445,9 @@ class MPICommunication(Communication):
     Ibcast.__doc__ = MPI.Comm.Ibcast.__doc__
 
     def __reduce_like(self, func, sendbuf, recvbuf, *args, **kwargs):
+        sbuf = None
+        rbuf = None
+        
         # unpack the send buffer if it is a HeAT tensor
         if isinstance(sendbuf, dndarray.DNDarray):
             sendbuf = sendbuf._DNDarray__array
@@ -460,11 +462,13 @@ class MPICommunication(Communication):
             # convert the send buffer to a pointer, number of elements and type are identical to the receive buffer
             dummy = sendbuf.contiguous()  # make a contiguous copy and reassign the storage, old will be collected
             sendbuf.set_(dummy.storage(), dummy.storage_offset(), size=dummy.shape, stride=dummy.stride())
-            sendbuf = self.as_buffer(sendbuf)
+            sbuf = sendbuf if CUDA_AWARE_MPI else sendbuf.cpu()
+            sendbuf = self.as_buffer(sbuf)
         if isinstance(recvbuf, torch.Tensor):
             # nothing matches, the buffers have to be made contiguous
             dummy = recvbuf.contiguous()
             recvbuf.set_(dummy.storage(), dummy.storage_offset(), size=dummy.shape, stride=dummy.stride())
+            rbuf = recvbuf if CUDA_AWARE_MPI else recvbuf.cpu()
             if sendbuf is MPI.IN_PLACE:
                 recvbuf = self.as_buffer(recvbuf)
             else:
@@ -887,7 +891,7 @@ class MPIRequest:
     
     def Wait(self, status=None):
         self.handle.Wait(status)
-        if self.array is not None:
+        if isinstance(self.array, dndarray.DNDarray):
             self.array._DNDarray__array = self.recvbuf.cuda()
 
     
