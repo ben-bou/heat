@@ -379,19 +379,19 @@ class MPICommunication(Communication):
     Bsend.__doc__ = MPI.Comm.Bsend.__doc__
 
     def Ibsend(self, buf, dest, tag=0):
-        return MPIRequest(self.__send_like(self.handle.Ibsend, buf, dest, tag))
+        return MPIRequest(*self.__send_like(self.handle.Ibsend, buf, dest, tag))
     Ibsend.__doc__ = MPI.Comm.Ibsend.__doc__
 
     def Irsend(self, buf, dest, tag=0): 
-        return MPIRequest(self.__send_like(self.handle.Irsend, buf, dest, tag))
+        return MPIRequest(*self.__send_like(self.handle.Irsend, buf, dest, tag))
     Irsend.__doc__ = MPI.Comm.Irsend.__doc__
 
     def Isend(self, buf, dest, tag=0):
-        return MPIRequest(self.__send_like(self.handle.Isend, buf, dest, tag))
+        return MPIRequest(*self.__send_like(self.handle.Isend, buf, dest, tag))
     Isend.__doc__ = MPI.Comm.Isend.__doc__
 
     def Issend(self, buf, dest, tag=0):
-        return MPIRequest(self.__send_like(self.handle.Issend, buf, dest, tag))
+        return MPIRequest(*self.__send_like(self.handle.Issend, buf, dest, tag))
     Issend.__doc__ = MPI.Comm.Issend.__doc__
 
     def Rsend(self, buf, dest, tag=0):
@@ -426,7 +426,7 @@ class MPICommunication(Communication):
     Bcast.__doc__ = MPI.Comm.Bcast.__doc__
 
     def Ibcast(self, buf, root=0):
-        return MPIRequest(self.__broadcast_like(self.handle.Ibcast, buf, root))
+        return MPIRequest(*self.__broadcast_like(self.handle.Ibcast, buf, root))
     Ibcast.__doc__ = MPI.Comm.Ibcast.__doc__
 
     def __reduce_like(self, func, sendbuf, recvbuf, *args, **kwargs):
@@ -478,19 +478,19 @@ class MPICommunication(Communication):
     Exscan.__doc__ = MPI.COMM_WORLD.Exscan.__doc__
 
     def Iallreduce(self, sendbuf, recvbuf, op=MPI.SUM):
-        return MPIRequest(self.__reduce_like(self.handle.Iallreduce, sendbuf, recvbuf, op))
+        return MPIRequest(*self.__reduce_like(self.handle.Iallreduce, sendbuf, recvbuf, op))
     Iallreduce.__doc__ = MPI.Comm.Iallreduce.__doc__
 
     def Iexscan(self, sendbuf, recvbuf, op=MPI.SUM):
-        return MPIRequest(self.__reduce_like(self.handle.Iexscan, sendbuf, recvbuf, op))
+        return MPIRequest(*self.__reduce_like(self.handle.Iexscan, sendbuf, recvbuf, op))
     Iexscan.__doc__ = MPI.COMM_WORLD.Iexscan.__doc__
 
     def Iscan(self, sendbuf, recvbuf, op=MPI.SUM):
-        return MPIRequest(self.__reduce_like(self.handle.Iscan, sendbuf, recvbuf, op))
+        return MPIRequest(*self.__reduce_like(self.handle.Iscan, sendbuf, recvbuf, op))
     Iscan.__doc__ = MPI.COMM_WORLD.Iscan.__doc__
 
     def Ireduce(self, sendbuf, recvbuf, op=MPI.SUM, root=0):
-        return MPIRequest(self.__reduce_like(self.handle.Ireduce, sendbuf, recvbuf, op, root))
+        return MPIRequest(*self.__reduce_like(self.handle.Ireduce, sendbuf, recvbuf, op, root))
     Ireduce.__doc__ = MPI.Comm.Ireduce.__doc__
 
     def Reduce(self, sendbuf, recvbuf, op=MPI.SUM, root=0):
