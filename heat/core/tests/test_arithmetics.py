@@ -204,7 +204,7 @@ class TestArithmetics(unittest.TestCase):
         out_noaxis = ht.zeros((1,))
         ht.prod(shape_noaxis, out=out_noaxis)
         self.assertEqual(out_noaxis._DNDarray__array, 1)
-        raise TypeError('{}'.format(ht.communication.CUDA_AWARE_MPI))
+        
         # check sum over all float elements of split 1d tensor
         shape_noaxis_split = ht.arange(1, array_len, split=0)
         shape_noaxis_split_prod = shape_noaxis_split.prod()
@@ -329,7 +329,7 @@ class TestArithmetics(unittest.TestCase):
         out_noaxis = ht.zeros((1,))
         ht.sum(shape_noaxis, out=out_noaxis)
         self.assertTrue(out_noaxis._DNDarray__array == shape_noaxis._DNDarray__array.sum())
-        raise TypeError('{}'.format(ht.communication.CUDA_AWARE_MPI))
+        
         # check sum over all float elements of split 1d tensor
         shape_noaxis_split = ht.arange(array_len, split=0)
         shape_noaxis_split_sum = shape_noaxis_split.sum()

@@ -338,35 +338,29 @@ class MPICommunication(Communication):
         recvdispls = [offsets[0] * d for d in tmp_displs]
         recvtypes = [mpi_type] * nproc
 
-        return self.as_mpi_memory(obj), (recvcount, recvdispls), recvtypes
-
-
+        return self.as_mpi_memory(obj), (recvcount, recvdispls), recvtypes    
+    
     def Irecv(self, buf, source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG):
-        obj = buf._DNDarray__array if isinstance(buf, dndarray.DNDarray) else buf
+        if isinstance(buf, dndarray.DNDarray):
+            buf = buf._DNDarray__array
         if not isinstance(buf, torch.Tensor):
             return MPIRequest(self.handle.Irecv(buf, source, tag))
         
-        # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
-        ten = obj if CUDA_AWARE_MPI else obj.cpu()
-        ret = self.handle.Irecv(self.as_buffer(ten), source, tag)
-        
-        if not CUDA_AWARE_MPI and obj.is_cuda:
-            return MPIRequest(ret, None, ten, buf)
-        
-        return MPIRequest(ret)
+        rbuf = buf if CUDA_AWARE_MPI else buf.cpu()
+        return MPIRequest(self.handle.Irecv(self.as_buffer(rbuf), source, tag), None, rbuf, buf)
     Irecv.__doc__ = MPI.Comm.Irecv.__doc__
 
     def Recv(self, buf, source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=None):
-        obj = buf._DNDarray__array if isinstance(buf, dndarray.DNDarray) else buf
-        if not isinstance(obj, torch.Tensor):
-            return self.handle.Recv(obj, source, tag, status)  
+        if isinstance(buf, dndarray.DNDarray):
+            buf = buf._DNDarray__array
+        if not isinstance(buf, torch.Tensor):
+            return self.handle.Recv(buf, source, tag, status)
         
-        # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
-        ten = obj if CUDA_AWARE_MPI else obj.cpu()
-        ret = self.handle.Recv(self.as_buffer(ten), source, tag, status)
-        
-        if isinstance(buf, dndarray.DNDarray) and not CUDA_AWARE_MPI and obj.is_cuda:
-            buf._DNDarray__array = ten.cuda()
+        rbuf = buf if CUDA_AWARE_MPI else buf.cpu()
+        ret = self.handle.Recv(self.as_buffer(rbuf), source, tag, status)
+
+        if buf.is_cuda and not CUDA_AWARE_MPI:
+            buf.copy_(rbuf)
         return ret
     Recv.__doc__ = MPI.Comm.Recv.__doc__
 
@@ -377,33 +371,27 @@ class MPICommunication(Communication):
             return func(buf, dest, tag), None
 
         # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
-        ten = buf if CUDA_AWARE_MPI else buf.cpu()
-        ret = func(self.as_buffer(ten), dest, tag)
-        
-        return ret, ten
+        sbuf = buf if CUDA_AWARE_MPI else buf.cpu()
+        return func(self.as_buffer(sbuf), dest, tag), sbuf
 
     def Bsend(self, buf, dest, tag=0):
         return self.__send_like(self.handle.Bsend, buf, dest, tag)[0]
     Bsend.__doc__ = MPI.Comm.Bsend.__doc__
 
     def Ibsend(self, buf, dest, tag=0):
-        req, tensor = self.__send_like(self.handle.Ibsend, buf, dest, tag)
-        return MPIRequest(req, tensor)
+        return MPIRequest(self.__send_like(self.handle.Ibsend, buf, dest, tag))
     Ibsend.__doc__ = MPI.Comm.Ibsend.__doc__
 
-    def Irsend(self, buf, dest, tag=0):
-        req, tensor = self.__send_like(self.handle.Irsend, buf, dest, tag)
-        return MPIRequest(req, tensor)
+    def Irsend(self, buf, dest, tag=0): 
+        return MPIRequest(self.__send_like(self.handle.Irsend, buf, dest, tag))
     Irsend.__doc__ = MPI.Comm.Irsend.__doc__
 
     def Isend(self, buf, dest, tag=0):
-        req, tensor = self.__send_like(self.handle.Isend, buf, dest, tag)
-        return MPIRequest(req, tensor)
+        return MPIRequest(self.__send_like(self.handle.Isend, buf, dest, tag))
     Isend.__doc__ = MPI.Comm.Isend.__doc__
 
     def Issend(self, buf, dest, tag=0):
-        req, tensor = self.__send_like(self.handle.Issend, buf, dest, tag)
-        return MPIRequest(req, tensor)
+        return MPIRequest(self.__send_like(self.handle.Issend, buf, dest, tag))
     Issend.__doc__ = MPI.Comm.Issend.__doc__
 
     def Rsend(self, buf, dest, tag=0):
@@ -420,34 +408,31 @@ class MPICommunication(Communication):
 
     def __broadcast_like(self, func, buf, root):
         # unpack the buffer if it is a HeAT tensor
-        obj = buf._DNDarray__array if isinstance(buf, dndarray.DNDarray) else buf
-
+        if isinstance(buf, dndarray.DNDarray):
+            buf = buf._DNDarray__array
         # convert torch tensors to MPI memory buffers
         if not isinstance(buf, torch.Tensor):
-            return func(buf, root), None, None
-
-        # in case of GPUs, the memory has to be copied to host memory if CUDA-aware MPI is not supported
-        ten = obj if CUDA_AWARE_MPI else obj.cpu()
-        ret = func(self.as_buffer(ten), root)
-
-        if not CUDA_AWARE_MPI and obj.is_cuda:
-            return ret, ten, buf
+            return func(buf, root), None, None, None
         
-        return ret, None, None
+        srbuf = buf if CUDA_AWARE_MPI else buf.cpu()
+
+        return func(self.as_buffer(srbuf), root), srbuf, srbuf, buf
 
     def Bcast(self, buf, root=0):
-        return self.__broadcast_like(self.handle.Bcast, buf, root)[0]
+        ret, sbuf, rbuf, buf = self.__broadcast_like(self.handle.Bcast, buf, root)
+        if buf is not None and buf.is_cuda and not CUDA_AWARE_MPI:
+            buf.copy_(rbuf)
+        return ret
     Bcast.__doc__ = MPI.Comm.Bcast.__doc__
 
     def Ibcast(self, buf, root=0):
-        req, tensor, array = self.__broadcast_like(self.handle.Ibcast, buf, root)
-        return MPIRequest(req, None, tensor, array)
+        return MPIRequest(self.__broadcast_like(self.handle.Ibcast, buf, root))
     Ibcast.__doc__ = MPI.Comm.Ibcast.__doc__
 
     def __reduce_like(self, func, sendbuf, recvbuf, *args, **kwargs):
         sbuf = None
         rbuf = None
-        
+        buf = None
         # unpack the send buffer if it is a HeAT tensor
         if isinstance(sendbuf, dndarray.DNDarray):
             sendbuf = sendbuf._DNDarray__array
@@ -465,48 +450,61 @@ class MPICommunication(Communication):
             sbuf = sendbuf if CUDA_AWARE_MPI else sendbuf.cpu()
             sendbuf = self.as_buffer(sbuf)
         if isinstance(recvbuf, torch.Tensor):
+            buf = recvbuf
             # nothing matches, the buffers have to be made contiguous
             dummy = recvbuf.contiguous()
             recvbuf.set_(dummy.storage(), dummy.storage_offset(), size=dummy.shape, stride=dummy.stride())
             rbuf = recvbuf if CUDA_AWARE_MPI else recvbuf.cpu()
             if sendbuf is MPI.IN_PLACE:
-                recvbuf = self.as_buffer(recvbuf)
+                recvbuf = self.as_buffer(rbuf)
             else:
-                recvbuf = (self.as_mpi_memory(recvbuf), sendbuf[1], sendbuf[2],)
+                recvbuf = (self.as_mpi_memory(rbuf), sendbuf[1], sendbuf[2],)
 
         # perform the actual reduction operation
-        return func(sendbuf, recvbuf, *args, **kwargs)
+        return func(sendbuf, recvbuf, *args, **kwargs), sbuf, rbuf, buf
 
     def Allreduce(self, sendbuf, recvbuf, op=MPI.SUM):
-        return self.__reduce_like(self.handle.Allreduce, sendbuf, recvbuf, op)
+        ret, sbuf, rbuf, buf = self.__reduce_like(self.handle.Allreduce, sendbuf, recvbuf, op)
+        if buf is not None and buf.is_cuda and not CUDA_AWARE_MPI:
+            buf.copy_(rbuf)
+        return ret
     Allreduce.__doc__ = MPI.Comm.Allreduce.__doc__
 
     def Exscan(self, sendbuf, recvbuf, op=MPI.SUM):
-        return self.__reduce_like(self.handle.Exscan, sendbuf, recvbuf, op)
+        ret, sbuf, rbuf, buf = self.__reduce_like(self.handle.Exscan, sendbuf, recvbuf, op)
+        if buf is not None and buf.is_cuda and not CUDA_AWARE_MPI:
+            buf.copy_(rbuf)
+        return ret
     Exscan.__doc__ = MPI.COMM_WORLD.Exscan.__doc__
 
     def Iallreduce(self, sendbuf, recvbuf, op=MPI.SUM):
-        return self.__reduce_like(self.handle.Iallreduce, sendbuf, recvbuf, op)
+        return MPIRequest(self.__reduce_like(self.handle.Iallreduce, sendbuf, recvbuf, op))
     Iallreduce.__doc__ = MPI.Comm.Iallreduce.__doc__
 
     def Iexscan(self, sendbuf, recvbuf, op=MPI.SUM):
-        return self.__reduce_like(self.handle.Iexscan, sendbuf, recvbuf, op)
+        return MPIRequest(self.__reduce_like(self.handle.Iexscan, sendbuf, recvbuf, op))
     Iexscan.__doc__ = MPI.COMM_WORLD.Iexscan.__doc__
 
     def Iscan(self, sendbuf, recvbuf, op=MPI.SUM):
-        return self.__reduce_like(self.handle.Iscan, sendbuf, recvbuf, op)
+        return MPIRequest(self.__reduce_like(self.handle.Iscan, sendbuf, recvbuf, op))
     Iscan.__doc__ = MPI.COMM_WORLD.Iscan.__doc__
 
     def Ireduce(self, sendbuf, recvbuf, op=MPI.SUM, root=0):
-        return self.__reduce_like(self.handle.Ireduce, sendbuf, recvbuf, op, root)
+        return MPIRequest(self.__reduce_like(self.handle.Ireduce, sendbuf, recvbuf, op, root))
     Ireduce.__doc__ = MPI.Comm.Ireduce.__doc__
 
     def Reduce(self, sendbuf, recvbuf, op=MPI.SUM, root=0):
-        return self.__reduce_like(self.handle.Reduce, sendbuf, recvbuf, op, root)
+        ret, sbuf, rbuf, buf = self.__reduce_like(self.handle.Reduce, sendbuf, recvbuf, op, root)
+        if buf is not None and buf.is_cuda and not CUDA_AWARE_MPI:
+            buf.copy_(rbuf)
+        return ret
     Reduce.__doc__ = MPI.Comm.Reduce.__doc__
 
     def Scan(self, sendbuf, recvbuf, op=MPI.SUM):
-        return self.__reduce_like(self.handle.Scan, sendbuf, recvbuf, op)
+        ret, sbuf, rbuf, buf = self.__reduce_like(self.handle.Scan, sendbuf, recvbuf, op)
+        if buf is not None and buf.is_cuda and not CUDA_AWARE_MPI:
+            buf.copy_(rbuf)
+        return ret
     Scan.__doc__ = MPI.COMM_WORLD.Scan.__doc__
 
     def __allgather_like(self, func, sendbuf, recvbuf, axis, **kwargs):
@@ -883,16 +881,17 @@ class MPICommunication(Communication):
         return getattr(self.handle, name)
 
 class MPIRequest:
-    def __init__(self, handle, sendbuf=None, recvbuf=None, array=None):
+    def __init__(self, handle, sendbuf=None, recvbuf=None, tensor=None):
         self.handle = handle
-        self.array = array
+        self.tensor = tensor
         self.recvbuf = recvbuf
         self.sendbuf = sendbuf
     
     def Wait(self, status=None):
         self.handle.Wait(status)
-        if isinstance(self.array, dndarray.DNDarray):
-            self.array._DNDarray__array = self.recvbuf.cuda()
+        if self.tensor is not None and self.tensor.is_cuda and not CUDA_AWARE_MPI:
+            self.tensor.copy_(self.recvbuf)
+        return
 
     
     def __getattr__(self, name):
