@@ -7,6 +7,9 @@ import heat as ht
 if os.environ.get('DEVICE') == 'gpu':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
+else:
+    device = torch.device("cpu")
+    ht.use_device("cpu")
 
 class TestCommunication(unittest.TestCase):
     @classmethod
@@ -189,7 +192,7 @@ class TestCommunication(unittest.TestCase):
         # test for proper sanitation
         with self.assertRaises(TypeError):
             ht.use_comm('1')
-"""
+
     def test_allgather(self):
         # contiguous data
         data = ht.ones((1, 7,))
@@ -2135,4 +2138,4 @@ class TestCommunication(unittest.TestCase):
             test4.comm.Alltoallv(test4._DNDarray__array, redistributed4, send_axis=2, recv_axis=2)
         with self.assertRaises(NotImplementedError):
             test4.comm.Alltoallv(test4._DNDarray__array, redistributed4, send_axis=None)
- """
+ 
