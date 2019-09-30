@@ -543,36 +543,34 @@ class MPICommunication(Communication):
 
         # keep a reference to the original buffer object
         original_recvbuf = recvbuf
+        sbuf = sendbuf if CUDA_AWARE_MPI or not isinstance(sendbuf, torch.Tensor) else sendbuf.cpu()
+        rbuf = recvbuf if CUDA_AWARE_MPI or not isinstance(recvbuf, torch.Tensor) else recvbuf.cpu()
 
 
         # permute the send_axis order so that the split send_axis is the first to be transmitted
         if(axis !=0 ):
             send_axis_permutation = list(range(sendbuf.ndimension()))
             send_axis_permutation[0], send_axis_permutation[axis] = axis, 0
-            sendbuf = sendbuf.permute(*send_axis_permutation)
+            sendbuf = sbuf.permute(*send_axis_permutation)
 
         if(axis !=0 ):
             recv_axis_permutation = list(range(recvbuf.ndimension()))
             recv_axis_permutation[0], recv_axis_permutation[axis] = axis, 0
-            recvbuf = recvbuf.permute(*recv_axis_permutation)
+            recvbuf = rbuf.permute(*recv_axis_permutation)
 
 
         # prepare buffer objects
         if sendbuf is  MPI.IN_PLACE or not isinstance(sendbuf, torch.Tensor):
-            sbuf = sendbuf if CUDA_AWARE_MPI or not isinstance(sendbuf, torch.Tensor) else sendbuf.cpu()
             mpi_sendbuf = sbuf
         else:
-            sbuf = sendbuf if CUDA_AWARE_MPI else sendbuf.cpu()
             mpi_sendbuf = self.as_buffer(sbuf, send_counts, send_displs)
             if send_counts is not None:
                 mpi_sendbuf[1] = mpi_sendbuf[1][0][self.rank]
 
         self.Barrier()
         if recvbuf is MPI.IN_PLACE or not isinstance(recvbuf, torch.Tensor):
-            rbuf = recvbuf if CUDA_AWARE_MPI or not isinstance(recvbuf, torch.Tensor) else recvbuf.cpu()
             mpi_recvbuf = rbuf
         else:
-            rbuf = recvbuf if CUDA_AWARE_MPI else recvbuf.cpu()
             mpi_recvbuf = self.as_buffer(rbuf, recv_counts, recv_displs)
             if recv_counts is None:
                 mpi_recvbuf[1] //= self.size
