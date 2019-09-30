@@ -580,9 +580,8 @@ class MPICommunication(Communication):
 
         # undo the recvbuf permutation and assign the temporary buffer to the original recvbuf
         if axis != 0:
-            recvbuf.copy_(rbuf)
-            recvbuf = recvbuf.permute(*recv_axis_permutation)
-            original_recvbuf.set_(recvbuf.storage(), recvbuf.storage_offset(), recvbuf.shape, recvbuf.stride())
+            rbuf = rbuf.permute(*recv_axis_permutation)
+            #original_recvbuf.set_(recvbuf.storage(), recvbuf.storage_offset(), recvbuf.shape, recvbuf.stride())
 
         return exit_code, sbuf, rbuf, original_recvbuf
 
