@@ -543,21 +543,20 @@ class MPICommunication(Communication):
 
         # keep a reference to the original buffer object
         original_recvbuf = recvbuf
-        sbuf = sendbuf if CUDA_AWARE_MPI or not isinstance(sendbuf, torch.Tensor) else sendbuf.cpu()
-        rbuf = recvbuf if CUDA_AWARE_MPI or not isinstance(recvbuf, torch.Tensor) else recvbuf.cpu()
-
 
         # permute the send_axis order so that the split send_axis is the first to be transmitted
         if(axis !=0 ):
             send_axis_permutation = list(range(sendbuf.ndimension()))
             send_axis_permutation[0], send_axis_permutation[axis] = axis, 0
-            sendbuf = sbuf.permute(*send_axis_permutation)
+            sendbuf = sendbuf.permute(*send_axis_permutation)
 
         if(axis !=0 ):
             recv_axis_permutation = list(range(recvbuf.ndimension()))
             recv_axis_permutation[0], recv_axis_permutation[axis] = axis, 0
-            recvbuf = rbuf.permute(*recv_axis_permutation)
+            recvbuf = recvbuf.permute(*recv_axis_permutation)
 
+        sbuf = sendbuf if CUDA_AWARE_MPI or not isinstance(sendbuf, torch.Tensor) else sendbuf.cpu()
+        rbuf = recvbuf if CUDA_AWARE_MPI or not isinstance(recvbuf, torch.Tensor) else recvbuf.cpu()
 
         # prepare buffer objects
         if sendbuf is  MPI.IN_PLACE or not isinstance(sendbuf, torch.Tensor):
@@ -581,6 +580,7 @@ class MPICommunication(Communication):
 
         # undo the recvbuf permutation and assign the temporary buffer to the original recvbuf
         if axis != 0:
+            recvbuf.copy_(rbuf)
             recvbuf = recvbuf.permute(*recv_axis_permutation)
             original_recvbuf.set_(recvbuf.storage(), recvbuf.storage_offset(), recvbuf.shape, recvbuf.stride())
 
