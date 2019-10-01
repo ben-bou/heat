@@ -2075,7 +2075,7 @@ class TestCommunication(unittest.TestCase):
         test2 = self.sorted3Dtensor.copy()
         test3 = self.sorted3Dtensor.copy()
         result = self.sorted3Dtensor.copy()
-        raise TypeError('Wrong device type {}, {}'.format(test1.device, test2.device))
+        
         test1.resplit(axis=0)
         test2.resplit(axis=1)
         test3.resplit(axis=2)
