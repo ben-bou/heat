@@ -517,7 +517,7 @@ class MPICommunication(Communication):
         axis: concatenation axis: The axis along which sendbuf is packed and along which recvbuf puts together individual chunks
         """
 
-        sbuf, rbuf = None, None
+        sbuf, rbuf, recv_axis_permutation = None, None, None
 
         # dummy allocation for *v calls
          # ToDO: Propper implementation of usage
@@ -579,11 +579,11 @@ class MPICommunication(Communication):
         exit_code = func(mpi_sendbuf, mpi_recvbuf, **kwargs)
 
         # undo the recvbuf permutation and assign the temporary buffer to the original recvbuf
-        if axis != 0:
-            rbuf = rbuf.permute(*recv_axis_permutation)
+        #if axis != 0:
+            #rbuf = rbuf.permute(*recv_axis_permutation)
             #original_recvbuf.set_(recvbuf.storage(), recvbuf.storage_offset(), recvbuf.shape, recvbuf.stride())
 
-        return exit_code, sbuf, rbuf, original_recvbuf
+        return exit_code, sbuf, rbuf, original_recvbuf, recv_axis_permutation
 
     def Allgather(self, sendbuf, recvbuf, recv_axis=0):
         """
@@ -593,8 +593,10 @@ class MPICommunication(Communication):
         recvbuf: Input Receivebuffer
         recv_axis: concatenation axis: The axis among which sendbuffer is distributed before allgather is performed
         """
-        ret, sbuf, rbuf, buf = self.__allgather_like(self.handle.Allgather, sendbuf, recvbuf, recv_axis)
+        ret, sbuf, rbuf, buf, permutation = self.__allgather_like(self.handle.Allgather, sendbuf, recvbuf, recv_axis)
         if buf is not None and isinstance(buf, torch.Tensor) and buf.is_cuda and not CUDA_AWARE_MPI:
+            if permutation is not None:
+                rbuf = rbuf.permute(permutation)
             buf.copy_(rbuf)
         return ret
 
@@ -608,8 +610,10 @@ class MPICommunication(Communication):
         recvbuf: Input Receivebuffer
         recv_axis: concatenation axis: The axis among which sendbuffer is distributed before allgather is performed
         """
-        ret, sbuf, rbuf, buf = self.__allgather_like(self.handle.Allgatherv, sendbuf, recvbuf, recv_axis)
+        ret, sbuf, rbuf, buf, permutation = self.__allgather_like(self.handle.Allgatherv, sendbuf, recvbuf, recv_axis)
         if buf is not None and isinstance(buf, torch.Tensor) and buf.is_cuda and not CUDA_AWARE_MPI:
+            if permutation is not None:
+                rbuf = rbuf.permute(permutation)
             buf.copy_(rbuf)
         return ret
     Allgatherv.__doc__ = MPI.Comm.Allgatherv.__doc__
@@ -920,15 +924,18 @@ class MPICommunication(Communication):
         return getattr(self.handle, name)
 
 class MPIRequest:
-    def __init__(self, handle, sendbuf=None, recvbuf=None, tensor=None):
+    def __init__(self, handle, sendbuf=None, recvbuf=None, tensor=None, permutation=None):
         self.handle = handle
         self.tensor = tensor
         self.recvbuf = recvbuf
         self.sendbuf = sendbuf
+        self.permutation = permutation
     
     def Wait(self, status=None):
         self.handle.Wait(status)
         if self.tensor is not None and isinstance(self.tensor, torch.Tensor) and self.tensor.is_cuda and not CUDA_AWARE_MPI:
+            if self.permutation is not None:
+                self.recvbuf = self.recvbuf.permute(self.permutation)
             self.tensor.copy_(self.recvbuf)
         return
 
