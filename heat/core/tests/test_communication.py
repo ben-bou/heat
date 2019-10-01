@@ -857,7 +857,6 @@ class TestCommunication(unittest.TestCase):
             # check scatter result
             self.assertTrue(data._DNDarray__array.is_contiguous())
             self.assertTrue(output._DNDarray__array.is_contiguous())
-            raise ValueError('{} {}'.format(output._DNDarray__array, torch.ones(ht.MPI_WORLD.size, 7, device=device)))
             self.assertTrue((output._DNDarray__array == torch.ones(ht.MPI_WORLD.size, 7, device=device)).all())
 
             # contiguous data, different gather axis
