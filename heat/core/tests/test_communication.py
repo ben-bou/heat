@@ -847,7 +847,7 @@ class TestCommunication(unittest.TestCase):
             # contiguous data
             data = ht.ones((1, 7,))
             output = ht.zeros((ht.MPI_WORLD.size, 7,))
-            raise TypeError('Wrong device type {}, {}'.format(data.device, output.device))
+            
             # ensure prior invariants
             self.assertTrue(data._DNDarray__array.is_contiguous())
             self.assertTrue(output._DNDarray__array.is_contiguous())
@@ -2085,7 +2085,7 @@ class TestCommunication(unittest.TestCase):
         gathered2_counts, gathered2_displs, _ = test2.comm.counts_displs_shape(test2.shape, test2.split)
         gathered2 = torch.empty(self.sorted3Dtensor.shape, device=device)
         gathered3_counts, gathered3_displs, _ = test3.comm.counts_displs_shape(test3.shape, test3.split)
-        gathered3 = torch.empty(self.sorted3Dtensor.shape)
+        gathered3 = torch.empty(self.sorted3Dtensor.shape, device=device)
 
         test1.comm.Allgatherv(test1,  (gathered1, gathered1_counts, gathered1_displs,), recv_axis=test1.split)
         self.assertTrue(torch.equal(gathered1, result._DNDarray__array))

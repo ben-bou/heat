@@ -655,7 +655,7 @@ class MPICommunication(Communication):
         -------
         exit code: of func
         """
-        sbuf, rbuf, permutation = None, None, None
+        sbuf, rbuf, recv_axis_permutation = None, None, None
 
         if send_axis == None:
             raise NotImplementedError(
@@ -782,7 +782,7 @@ class MPICommunication(Communication):
     Ialltoall.__doc__ = MPI.Comm.Ialltoall.__doc__
 
     def Ialltoallv(self, sendbuf, recvbuf, send_axis=0, recv_axis=None):
-        return MPIRequest(self.__alltoall_like(self.handle.Ialltoallv, sendbuf, recvbuf, send_axis, recv_axis))
+        return MPIRequest(*self.__alltoall_like(self.handle.Ialltoallv, sendbuf, recvbuf, send_axis, recv_axis))
     Ialltoallv.__doc__ = MPI.Comm.Ialltoallv.__doc__
 
 
