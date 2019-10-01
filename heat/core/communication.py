@@ -951,6 +951,13 @@ class MPIRequest:
             self.tensor.copy_(self.recvbuf)
         return
 
+    def wait(self, status=None):
+        self.handle.wait(status)
+        if self.tensor is not None and isinstance(self.tensor, torch.Tensor) and self.tensor.is_cuda and not CUDA_AWARE_MPI:
+            if self.permutation is not None:
+                self.recvbuf = self.recvbuf.permute(self.permutation)
+            self.tensor.copy_(self.recvbuf)
+        return
     
     def __getattr__(self, name):
         """
