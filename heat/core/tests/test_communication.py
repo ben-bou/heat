@@ -2122,7 +2122,7 @@ class TestCommunication(unittest.TestCase):
         test3.resplit(axis=0)
         comparison3 = self.sorted3Dtensor.copy()
         comparison3.resplit(axis=2)
-        redistributed3 = torch.empty(comparison3.lshape, dtype=test3.dtype.torch_type())
+        redistributed3 = torch.empty(comparison3.lshape, dtype=test3.dtype.torch_type(), device=device)
         test3.comm.Alltoallv(test3._DNDarray__array, redistributed3, send_axis=comparison3.split, recv_axis=test3.split)
         self.assertTrue(torch.equal(redistributed3, comparison3._DNDarray__array))
 

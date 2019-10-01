@@ -770,7 +770,6 @@ class MPICommunication(Communication):
 
     def Alltoallv(self, sendbuf, recvbuf, send_axis=0, recv_axis=None):
         ret, sbuf, rbuf, buf, permutation = self.__alltoall_like(self.handle.Alltoallv, sendbuf, recvbuf, send_axis, recv_axis)
-        #raise ValueError('{} {} {} {}'.format(sbuf, rbuf, buf, permutation))
         if buf is not None and isinstance(buf, torch.Tensor) and buf.is_cuda and not CUDA_AWARE_MPI:
             if permutation is not None:
                 rbuf = rbuf.permute(permutation)
