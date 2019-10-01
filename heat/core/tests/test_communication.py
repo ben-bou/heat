@@ -2115,7 +2115,7 @@ class TestCommunication(unittest.TestCase):
         test2.comm.Alltoallv((test2._DNDarray__array, send_counts, send_displs,),
                              (redistributed2, recv_counts, recv_displs,), send_axis=comparison2.split,
                              recv_axis=test2.split)
-        self.assertTrue(torch.equal(redistributed2, comparison2._DNDarray__array, device=device))
+        self.assertTrue(torch.equal(redistributed2, comparison2._DNDarray__array))
 
 
         test3 = self.sorted3Dtensor.copy()
@@ -2132,7 +2132,7 @@ class TestCommunication(unittest.TestCase):
         comparison4.resplit(axis=0)
         redistributed4 = torch.empty(comparison4.lshape, dtype=test4.dtype.torch_type(), device=device)
         test4.comm.Alltoallv(test4._DNDarray__array, redistributed4, send_axis=comparison4.split, recv_axis=test4.split)
-        self.assertTrue(torch.equal(redistributed4, comparison4._DNDarray__array, device=device))
+        self.assertTrue(torch.equal(redistributed4, comparison4._DNDarray__array))
 
         with self.assertRaises(NotImplementedError):
             test4.comm.Alltoallv(test4._DNDarray__array, redistributed4, send_axis=2, recv_axis=2)
