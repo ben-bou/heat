@@ -753,7 +753,8 @@ class MPICommunication(Communication):
             mpi_recvbuf = self.alltoall_recvbuffer(rbuf)
 
             exit_code = self.handle.Alltoallw(mpi_sendbuf, mpi_recvbuf, **kwargs)
-            rbuf.set_(recvbuf.storage(), recvbuf.storage_offset(), original_recvbuf.shape, original_recvbuf.stride())
+            #original_recvbuf.set_(recvbuf.storage(), recvbuf.storage_offset(), original_recvbuf.shape, original_recvbuf.stride())
+            recv_axis_permutation = recv_axis
 
         return exit_code, sbuf, rbuf, original_recvbuf, recv_axis_permutation
 

@@ -6,14 +6,24 @@ ht.use_device(os.environ.get('DEVICE'))
 
 class TestDevices(unittest.TestCase):
     def test_get_default_device(self):
-        self.assertIs(ht.get_device(), ht.cpu)
+        if os.environ.get('DEVICE') == 'gpu':
+            self.assertIs(ht.get_device(), ht.gpu)
+        else:
+            self.assertIs(ht.get_device(), ht.cpu)
 
     def test_sanitize_device(self):
-        self.assertIs(ht.sanitize_device('cpu'), ht.cpu)
-        self.assertIs(ht.sanitize_device('cPu'), ht.cpu)
-        self.assertIs(ht.sanitize_device('  CPU  '), ht.cpu)
-        self.assertIs(ht.sanitize_device(ht.cpu), ht.cpu)
-        self.assertIs(ht.sanitize_device(None), ht.cpu)
+        if if os.environ.get('DEVICE') == 'gpu':
+            self.assertIs(ht.sanitize_device('gpu'), ht.gpu)
+            self.assertIs(ht.sanitize_device('gPu'), ht.gpu)
+            self.assertIs(ht.sanitize_device('  GPU  '), ht.gpu)
+            self.assertIs(ht.sanitize_device(ht.gpu), ht.gpu)
+            self.assertIs(ht.sanitize_device(None), ht.gpu)
+        else:
+            self.assertIs(ht.sanitize_device('cpu'), ht.cpu)
+            self.assertIs(ht.sanitize_device('cPu'), ht.cpu)
+            self.assertIs(ht.sanitize_device('  CPU  '), ht.cpu)
+            self.assertIs(ht.sanitize_device(ht.cpu), ht.cpu)
+            self.assertIs(ht.sanitize_device(None), ht.cpu)
 
         with self.assertRaises(ValueError):
             self.assertIs(ht.sanitize_device('fpu'), ht.cpu)
