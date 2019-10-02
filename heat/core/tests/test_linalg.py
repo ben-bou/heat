@@ -17,11 +17,11 @@ class TestLinalg(unittest.TestCase):
         n, m = 21, 31
         j, k = m, 45
         a_torch = torch.ones((n, m))
-        a_torch[0] = torch.arange(1, m + 1)
-        a_torch[:, -1] = torch.arange(1, n + 1)
+        a_torch[0] = torch.arange(1, m + 1, device=device)
+        a_torch[:, -1] = torch.arange(1, n + 1, device=device)
         b_torch = torch.ones((j, k))
-        b_torch[0] = torch.arange(1, k + 1)
-        b_torch[:, 0] = torch.arange(1, j + 1)
+        b_torch[0] = torch.arange(1, k + 1, device=device)
+        b_torch[:, 0] = torch.arange(1, j + 1, device=device)
 
         # splits None None
         a = ht.ones((n, m), split=None)
@@ -203,8 +203,8 @@ class TestLinalg(unittest.TestCase):
             # a -> vector
             a_torch = torch.ones((m))
             b_torch = torch.ones((j, k))
-            b_torch[0] = torch.arange(1, k + 1)
-            b_torch[:, 0] = torch.arange(1, j + 1)
+            b_torch[0] = torch.arange(1, k + 1, device=device)
+            b_torch[:, 0] = torch.arange(1, j + 1, device=device)
             # splits None None
             a = ht.ones((m), split=None)
             b = ht.ones((j, k), split=None)
@@ -291,8 +291,8 @@ class TestLinalg(unittest.TestCase):
 
             # b -> vector
             a_torch = torch.ones((n, m))
-            a_torch[0] = torch.arange(1, m + 1)
-            a_torch[:, -1] = torch.arange(1, n + 1)
+            a_torch[0] = torch.arange(1, m + 1, device=device)
+            a_torch[:, -1] = torch.arange(1, n + 1, device=device)
             b_torch = torch.ones((j))
             # splits None None
             a = ht.ones((n, m), split=None)

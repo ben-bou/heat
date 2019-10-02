@@ -46,7 +46,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (1,))
         self.assertEqual(result.lshape, (1,))
         self.assertEqual(result.split, None)
-        self.assertTrue((result._DNDarray__array == torch.tensor([19])))
+        self.assertTrue((result._DNDarray__array == torch.tensor([19], device=device)))
 
         # 2D split tensor, along the axis
         torch.manual_seed(1)
@@ -58,7 +58,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (ht.MPI_WORLD.size * 4,))
         self.assertEqual(result.lshape, (4,))
         self.assertEqual(result.split, 0)
-        self.assertTrue((result._DNDarray__array == torch.tensor([4, 4, 2, 4])).all())
+        self.assertTrue((result._DNDarray__array == torch.tensor([4, 4, 2, 4], device=device)).all())
 
         # 2D split tensor, across the axis
         size = ht.MPI_WORLD.size * 2
@@ -142,7 +142,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (ht.MPI_WORLD.size * 4,))
         self.assertEqual(result.lshape, (4,))
         self.assertEqual(result.split, 0)
-        self.assertTrue((result._DNDarray__array == torch.tensor([3, 1, 1, 3])).all())
+        self.assertTrue((result._DNDarray__array == torch.tensor([3, 1, 1, 3], device=device)).all())
 
         # 2D split tensor, across the axis
         size = ht.MPI_WORLD.size * 2
@@ -307,7 +307,7 @@ class TestStatistics(unittest.TestCase):
         ]
 
         ht_array = ht.array(data)
-        comparison = torch.tensor(data)
+        comparison = torch.tensor(data, device=device)
 
         # check global max
         maximum = ht.max(ht_array)
@@ -402,8 +402,8 @@ class TestStatistics(unittest.TestCase):
 
         ht_array1 = ht.array(data1)
         ht_array2 = ht.array(data2)
-        comparison1 = torch.tensor(data1)
-        comparison2 = torch.tensor(data2)
+        comparison1 = torch.tensor(data1, device=device)
+        comparison2 = torch.tensor(data2, device=device)
 
         # check maximum
         maximum = ht.maximum(ht_array1, ht_array2)
@@ -557,7 +557,7 @@ class TestStatistics(unittest.TestCase):
         ]
 
         ht_array = ht.array(data)
-        comparison = torch.tensor(data)
+        comparison = torch.tensor(data, device=device)
 
         # check global max
         minimum = ht.min(ht_array)
@@ -651,8 +651,8 @@ class TestStatistics(unittest.TestCase):
 
         ht_array1 = ht.array(data1)
         ht_array2 = ht.array(data2)
-        comparison1 = torch.tensor(data1)
-        comparison2 = torch.tensor(data2)
+        comparison1 = torch.tensor(data1, device=device)
+        comparison2 = torch.tensor(data2, device=device)
 
         # check minimum
         minimum = ht.minimum(ht_array1, ht_array2)

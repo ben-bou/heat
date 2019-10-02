@@ -40,7 +40,7 @@ class TestTypes(unittest.TestCase):
         elaborate_value = heat_type(ground_truth)
         self.assertIsInstance(elaborate_value, ht.DNDarray)
         self.assertEqual(elaborate_value.shape, (2, 3,))
-        self.assertEqual((elaborate_value._DNDarray__array == torch.tensor(ground_truth, dtype=torch_type)).all().item(), 1)
+        self.assertEqual((elaborate_value._DNDarray__array == torch.tensor(ground_truth, dtype=torch_type, device=device)).all().item(), 1)
         self.assertEqual(elaborate_value._DNDarray__array.dtype, torch_type)
 
         # check exception when there is more than one parameter
