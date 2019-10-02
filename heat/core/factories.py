@@ -213,9 +213,9 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
     # initialize the array
     if bool(copy):
         if isinstance(obj, torch.Tensor):
-            obj = obj.clone().detach().to(device.torch_device)
+            obj = obj.clone().detach().cuda()
         elif isinstance(obj, np.ndarray):
-            obj = torch.from_numpy(obj).to(device.torch_device)
+            obj = torch.from_numpy(obj).cuda()
         else:
             try:
                 obj = torch.tensor(obj, dtype=dtype.torch_type() if dtype is not None else None, device=device.torch_device)
