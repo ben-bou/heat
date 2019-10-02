@@ -201,7 +201,7 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
     # sanitize device and object
     device = devices.sanitize_device(device)
     comm = sanitize_comm(comm)
-    raise TypeError('{}'.format(print(device, device.torch_device)))
+    raise TypeError('{} {}'.format(device, device.torch_device))
     # extract the internal tensor in case of a heat tensor
     if isinstance(obj, dndarray.DNDarray):
         obj = obj._DNDarray__array
