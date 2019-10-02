@@ -1,10 +1,14 @@
-""" import unittest
+import unittest
 import torch
 import os
 import heat as ht
 
-ht.use_device(os.environ.get('DEVICE'))
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if os.environ.get('DEVICE') == 'gpu':
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
+else:
+    device = torch.device("cpu")
+    ht.use_device("cpu")
 
 class TestFactories(unittest.TestCase):
     def test_arange(self):
@@ -844,4 +848,3 @@ class TestFactories(unittest.TestCase):
             ht.zeros_like(ones, dtype='abc')
         with self.assertRaises(TypeError):
             ht.zeros_like(ones, split='axis')
- """

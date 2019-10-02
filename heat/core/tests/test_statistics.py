@@ -1,12 +1,16 @@
-""" import torch
+import torch
 import unittest
 from itertools import combinations
 import os
 import heat as ht
 import numpy as np
 
-ht.use_device(os.environ.get('DEVICE'))
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if os.environ.get('DEVICE') == 'gpu':
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
+else:
+    device = torch.device("cpu")
+    ht.use_device("cpu")
 
 class TestStatistics(unittest.TestCase):
     def test_argmax(self):
@@ -793,4 +797,3 @@ class TestStatistics(unittest.TestCase):
         for sp in [None, 0, 1]:
             iris = ht.load_hdf5('heat/datasets/data/iris.h5', 'data', split=sp)
             self.assertTrue(ht.allclose(ht.var(iris, bessel=True), 3.90318519755147))
- """

@@ -1,11 +1,15 @@
-""" import unittest
+import unittest
 import torch
 import heat as ht
 import numpy as np
 import os
 
-ht.use_device(os.environ.get('DEVICE'))
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if os.environ.get('DEVICE') == 'gpu':
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
+else:
+    device = torch.device("cpu")
+    ht.use_device("cpu")
 
 class TestManipulations(unittest.TestCase):
     def test_concatenate(self):
@@ -669,4 +673,3 @@ class TestManipulations(unittest.TestCase):
         data_split_zero = ht.array(torch_array, split=0)
         res, inv = ht.unique(data_split_zero, return_inverse=True, sorted=True)
         self.assertTrue(torch.equal(inv, exp_inv.to(dtype=inv.dtype)))
- """

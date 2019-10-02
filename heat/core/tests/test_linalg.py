@@ -1,11 +1,15 @@
-""" import torch
+import torch
 import unittest
 import os
 import heat as ht
 import numpy as np
 
-ht.use_device(os.environ.get('DEVICE'))
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if os.environ.get('DEVICE') == 'gpu':
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
+else:
+    device = torch.device("cpu")
+    ht.use_device("cpu")
 
 class TestLinalg(unittest.TestCase):
     def test_matmul(self):
@@ -880,4 +884,3 @@ class TestLinalg(unittest.TestCase):
             self.assertTrue(result._DNDarray__array[-1, 0] == 0)
         if result.comm.rank == result.shape[0] - 1:
             self.assertTrue(result._DNDarray__array[0, -1] == 1)
- """

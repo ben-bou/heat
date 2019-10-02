@@ -1,11 +1,15 @@
-""" import torch
+import torch
 import unittest
 import math
 import heat as ht
 import os
 
-ht.use_device(os.environ.get('DEVICE'))
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if os.environ.get('DEVICE') == 'gpu':
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
+else:
+    device = torch.device("cpu")
+    ht.use_device("cpu")
 
 class TestTrigonometrics(unittest.TestCase):
     def test_rad2deg(self):
@@ -444,4 +448,3 @@ class TestTrigonometrics(unittest.TestCase):
             ht.tanh([1, 2, 3])
         with self.assertRaises(TypeError):
             ht.tanh('hello world')
- """

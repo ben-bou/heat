@@ -1,10 +1,14 @@
-""" import torch
+import torch
 import unittest
 import os
 import heat as ht
 
-ht.use_device(os.environ.get('DEVICE'))
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if os.environ.get('DEVICE') == 'gpu':
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
+else:
+    device = torch.device("cpu")
+    ht.use_device("cpu")
 
 class TestLogical(unittest.TestCase):
     def test_all(self):
@@ -218,4 +222,3 @@ class TestLogical(unittest.TestCase):
         self.assertEqual(any_tensor.shape, (1,))
         self.assertEqual(any_tensor.dtype, ht.bool)
         self.assertTrue(ht.equal(any_tensor, res))
- """

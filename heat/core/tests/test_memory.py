@@ -1,4 +1,4 @@
-""" import unittest
+import unittest
 import os
 import heat as ht
 
@@ -17,4 +17,3 @@ class TestMemory(unittest.TestCase):
         # test exceptions
         with self.assertRaises(TypeError):
             ht.copy('hello world')
- """

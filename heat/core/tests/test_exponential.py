@@ -1,11 +1,15 @@
-""" import unittest
+import unittest
 import torch
 import os
 import numpy as np
 import heat as ht
 
-ht.use_device(os.environ.get('DEVICE'))
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if os.environ.get('DEVICE') == 'gpu':
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
+else:
+    device = torch.device("cpu")
+    ht.use_device("cpu")
 
 class TestExponential(unittest.TestCase):
     def test_exp(self):
@@ -408,4 +412,3 @@ class TestExponential(unittest.TestCase):
         # exception
         with self.assertRaises(TypeError):
             ht.sqrt(number_range, 'hello world')
- """

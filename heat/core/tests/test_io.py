@@ -1,4 +1,4 @@
-""" import numpy as np
+import numpy as np
 import os
 import tempfile
 import torch
@@ -6,8 +6,12 @@ import unittest
 
 import heat as ht
 
-ht.use_device(os.environ.get('DEVICE'))
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if os.environ.get('DEVICE') == 'gpu':
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
+else:
+    device = torch.device("cpu")
+    ht.use_device("cpu")
 
 class TestIO(unittest.TestCase):
     @classmethod
@@ -400,4 +404,3 @@ class TestIO(unittest.TestCase):
             ht.save_netcdf(data, 1, self.NETCDF_VARIABLE)
         with self.assertRaises(TypeError):
             ht.save_netcdf(data, self.NETCDF_PATH, 1)
- """

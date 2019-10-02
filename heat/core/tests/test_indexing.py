@@ -1,10 +1,14 @@
-""" import torch
+import torch
 import unittest
 import os
 import heat as ht
 
-ht.use_device(os.environ.get('DEVICE'))
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if os.environ.get('DEVICE') == 'gpu':
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
+else:
+    device = torch.device("cpu")
+    ht.use_device("cpu")
 
 class TestIndexing(unittest.TestCase):
     def test_nonzero(self):
@@ -88,4 +92,3 @@ class TestIndexing(unittest.TestCase):
 
         with self.assertRaises(NotImplementedError):
             ht.where(cond, ht.ones((3, 3), split=0), ht.ones((3, 3), split=1))
- """
