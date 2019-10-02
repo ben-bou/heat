@@ -1,4 +1,4 @@
-""" import os
+import os
 import unittest
 
 import heat as ht
@@ -17,4 +17,3 @@ class TestKMeans(unittest.TestCase):
         # check whether the results are correct
         self.assertIsInstance(centroids, ht.DNDarray)
         self.assertEqual(centroids.shape, (1, iris.shape[1], k))
- """
