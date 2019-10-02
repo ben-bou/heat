@@ -12,7 +12,7 @@ class TestDevices(unittest.TestCase):
             self.assertIs(ht.get_device(), ht.cpu)
 
     def test_sanitize_device(self):
-        if if os.environ.get('DEVICE') == 'gpu':
+        if os.environ.get('DEVICE') == 'gpu':
             self.assertIs(ht.sanitize_device('gpu'), ht.gpu)
             self.assertIs(ht.sanitize_device('gPu'), ht.gpu)
             self.assertIs(ht.sanitize_device('  GPU  '), ht.gpu)
