@@ -754,7 +754,7 @@ class MPICommunication(Communication):
 
             exit_code = self.handle.Alltoallw(mpi_sendbuf, mpi_recvbuf, **kwargs)
             #original_recvbuf.set_(recvbuf.storage(), recvbuf.storage_offset(), original_recvbuf.shape, original_recvbuf.stride())
-            recv_axis_permutation = axis_permutation
+            recv_axis_permutation = list(np.argsort(np.array(axis_permutation)))
 
         return exit_code, sbuf, rbuf, original_recvbuf, recv_axis_permutation
 
