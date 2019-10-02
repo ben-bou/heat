@@ -201,7 +201,7 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
     # sanitize device and object
     device = devices.sanitize_device(device)
     comm = sanitize_comm(comm)
-
+    raise TypeError('{}'.format(print(device.torch_device)))
     # extract the internal tensor in case of a heat tensor
     if isinstance(obj, dndarray.DNDarray):
         obj = obj._DNDarray__array
@@ -213,9 +213,9 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
     # initialize the array
     if bool(copy):
         if isinstance(obj, torch.Tensor):
-            obj = obj.clone().detach().cuda()
+            obj = obj.clone().detach().to(device.torch_device)
         elif isinstance(obj, np.ndarray):
-            obj = torch.from_numpy(obj).cuda()
+            obj = torch.from_numpy(obj).to(device.torch_device)
         else:
             try:
                 obj = torch.tensor(obj, dtype=dtype.torch_type() if dtype is not None else None, device=device.torch_device)
