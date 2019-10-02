@@ -2,17 +2,17 @@ import unittest
 import os
 import heat as ht
 
-ht.use_device(os.environ.get('DEVICE'))
-
 class TestDevices(unittest.TestCase):
     def test_get_default_device(self):
         if os.environ.get('DEVICE') == 'gpu':
+            ht.use_device(os.environ.get('DEVICE'))
             self.assertIs(ht.get_device(), ht.gpu)
         else:
             self.assertIs(ht.get_device(), ht.cpu)
 
     def test_sanitize_device(self):
         if os.environ.get('DEVICE') == 'gpu':
+            ht.use_device(os.environ.get('DEVICE'))
             self.assertIs(ht.sanitize_device('gpu'), ht.gpu)
             self.assertIs(ht.sanitize_device('gPu'), ht.gpu)
             self.assertIs(ht.sanitize_device('  GPU  '), ht.gpu)
