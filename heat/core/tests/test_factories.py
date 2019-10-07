@@ -161,7 +161,7 @@ class TestFactories(unittest.TestCase):
         self.assertEqual(d.lshape, (3, 1, 1))
         self.assertEqual(d.gshape, (3, 1, 1))
         self.assertEqual(d.split, None)
-        self.assertTrue((d._DNDarray__array == torch.tensor(vector_data).reshape(-1, 1, 1)).all())
+        self.assertTrue((d._DNDarray__array == torch.tensor(vector_data, device=device).reshape(-1, 1, 1)).all())
 
         # basic array function, unsplit data, additional dimensions
         vector_data = [4.0, 5.0, 6.0]
