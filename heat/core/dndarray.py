@@ -596,7 +596,7 @@ class DNDarray:
         sl_dtype = self.dtype.torch_type()
         # units -> {pr, 1st index, 2nd index}
         lshape_map = factories.zeros((self.comm.size, len(self.gshape)), dtype=int)
-        lshape_map[self.comm.rank, :] = torch.Tensor(self.lshape)
+        lshape_map[self.comm.rank, :] = torch.Tensor(self.lshape, device=self.device.torch_device)
         lshape_map_comm = self.comm.Iallreduce(MPI.IN_PLACE, lshape_map, MPI.SUM)
 
         chunk_map = factories.zeros((self.comm.size, len(self.gshape)), dtype=int)
@@ -642,7 +642,7 @@ class DNDarray:
                     if self.comm.rank == pr and snt:
                         shp = list(self.gshape)
                         shp[self.split] = snt
-                        data = torch.zeros(shp, dtype=sl_dtype)
+                        data = torch.zeros(shp, dtype=sl_dtype, device=self.device.torch_device)
                         self.comm.Recv(data, source=spr, tag=pr + self.comm.size + spr)
                         self.__array = torch.cat((self.__array, data), dim=self.split)
                     lshape_map[pr, self.split] += snt
@@ -680,7 +680,7 @@ class DNDarray:
                 if self.comm.rank == pr and snt:
                     shp = list(self.gshape)
                     shp[self.split] = snt
-                    data = torch.zeros(shp, dtype=sl_dtype)
+                    data = torch.zeros(shp, dtype=sl_dtype, device=self.device.torch_device)
                     self.comm.Recv(data, source=spr, tag=pr + self.comm.size + spr)
                     self.__array = torch.cat((data, self.__array), dim=self.split)
                 lshape_map[pr, self.split] += snt
@@ -1333,7 +1333,7 @@ class DNDarray:
             chunk_end = chunk_slice[self.split].stop
             chunk_set = set(range(chunk_start, chunk_end))
 
-            arr = torch.Tensor()
+            arr = torch.Tensor(device=self.device.torch_device)
 
             if isinstance(key, int):  # if a sigular index is given and the tensor is split
                 gout = [0] * (len(self.gshape) - 1)
@@ -2112,7 +2112,7 @@ class DNDarray:
 
         # unsplit the tensor
         if axis is None:
-            gathered = torch.empty(self.shape, dtype=self.dtype.torch_type())
+            gathered = torch.empty(self.shape, dtype=self.dtype.torch_type(), device=self.device.torch_device)
 
             recv_counts, recv_displs, _ = self.comm.counts_displs_shape(self.shape, self.split)
             self.comm.Allgatherv(self.__array, (gathered, recv_counts, recv_displs,), recv_axis=self.split)
@@ -2124,7 +2124,7 @@ class DNDarray:
         elif self.split is None:
             _, _, slices = self.comm.chunk(self.shape, axis)
             temp = self.__array[slices]
-            self.__array = torch.empty((1,))
+            self.__array = torch.empty((1,), device=self.device.torch_device)
             # necessary to clear storage of local __array
             self.__array= temp.clone().detach()
             self.__split = axis
@@ -2132,7 +2132,7 @@ class DNDarray:
         # entirely new split axis, need to redistribute
         else:
             _, output_shape, _ = self.comm.chunk(self.shape, axis)
-            redistributed = torch.empty(output_shape, dtype=self.dtype.torch_type())
+            redistributed = torch.empty(output_shape, dtype=self.dtype.torch_type(), device=self.device.torch_device)
 
             send_counts, send_displs, _ = self.comm.counts_displs_shape(self.lshape, axis)
             recv_counts, recv_displs, _ = self.comm.counts_displs_shape(self.shape, self.split)
@@ -2471,7 +2471,7 @@ class DNDarray:
         elif isinstance(value, torch.Tensor):
             self.__array.__setitem__(key, value.data)
         elif isinstance(value, (list, tuple)):
-            value = torch.Tensor(value)
+            value = torch.Tensor(value, device=self.device.torch_device)
             self.__array.__setitem__(key, value.data)
         elif isinstance(value, np.ndarray):
             value = torch.from_numpy(value)

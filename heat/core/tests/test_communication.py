@@ -96,7 +96,7 @@ class TestCommunication(unittest.TestCase):
 
         # multi-dimensional torch tensor
         tensor_data = torch.arange(3 * 4 * 5 * 6).reshape(3, 4, 5, 6) + 1
-        tensor_out = torch.zeros_like(tensor_data)
+        tensor_out = torch.zeros_like(tensor_data, device=device)
 
         # test that target and destination are not equal
         self.assertTrue((tensor_data != tensor_out).all())

@@ -473,10 +473,10 @@ class TestStatistics(unittest.TestCase):
         random_volume_3 = ht.array(ht.random.randn(4, 2, 3), split=0)
         with self.assertRaises(ValueError):
             ht.maximum(random_volume_1, random_volume_3)
-        random_volume_3 = torch.ones(12, 3, 3)
+        random_volume_3 = torch.ones(12, 3, 3, device=device)
         with self.assertRaises(TypeError):
             ht.maximum(random_volume_1, random_volume_3)
-        output = torch.ones(12, 3, 3)
+        output = torch.ones(12, 3, 3, device=device)
         with self.assertRaises(TypeError):
             ht.maximum(random_volume_1, random_volume_2, out=output)
         output = ht.ones((12, 4, 3))
@@ -722,10 +722,10 @@ class TestStatistics(unittest.TestCase):
         random_volume_3 = ht.array(ht.random.randn(4, 2, 3), split=0)
         with self.assertRaises(ValueError):
             ht.minimum(random_volume_1, random_volume_3)
-        random_volume_3 = torch.ones(12, 3, 3)
+        random_volume_3 = torch.ones(12, 3, 3, device=device)
         with self.assertRaises(TypeError):
             ht.minimum(random_volume_1, random_volume_3)
-        output = torch.ones(12, 3, 3)
+        output = torch.ones(12, 3, 3, device=device)
         with self.assertRaises(TypeError):
             ht.minimum(random_volume_1, random_volume_2, out=output)
         output = ht.ones((12, 4, 3))
