@@ -379,7 +379,7 @@ class TestIO(unittest.TestCase):
         ht.save_netcdf(local_data, self.NETCDF_OUT_PATH, self.NETCDF_VARIABLE)
         if local_data.comm.rank == 0:
             with ht.io.nc.Dataset(self.NETCDF_OUT_PATH, 'r') as handle:
-                comparison = torch.tensor(handle[self.NETCDF_VARIABLE][:], dtype=torch.int32)
+                comparison = torch.tensor(handle[self.NETCDF_VARIABLE][:], dtype=torch.int32, device=device)
             self.assertTrue((local_data._DNDarray__array == comparison).all())
 
         # distributed data range
@@ -387,7 +387,7 @@ class TestIO(unittest.TestCase):
         ht.save_netcdf(split_data, self.NETCDF_OUT_PATH, self.NETCDF_VARIABLE)
         if split_data.comm.rank == 0:
             with ht.io.nc.Dataset(self.NETCDF_OUT_PATH, 'r') as handle:
-                comparison = torch.tensor(handle[self.NETCDF_VARIABLE][:], dtype=torch.int32)
+                comparison = torch.tensor(handle[self.NETCDF_VARIABLE][:], dtype=torch.int32, device=device)
             self.assertTrue((local_data._DNDarray__array == comparison).all())
 
     def test_save_netcdf_exception(self):
