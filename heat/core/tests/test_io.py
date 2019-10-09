@@ -26,7 +26,7 @@ class TestIO(unittest.TestCase):
 
         # load comparison data from csv
         cls.CSV_PATH = os.path.join(os.getcwd(), 'heat/datasets/data/iris.csv')
-        cls.IRIS = torch.from_numpy(np.loadtxt(cls.CSV_PATH, delimiter=';')).float().cuda()
+        cls.IRIS = torch.from_numpy(np.loadtxt(cls.CSV_PATH, delimiter=';')).float().to(device)
 
     def tearDown(self):
         # synchronize all nodes
@@ -286,7 +286,7 @@ class TestIO(unittest.TestCase):
         ht.save_hdf5(local_data, self.HDF5_OUT_PATH, self.HDF5_DATASET)
         if local_data.comm.rank == 0:
             with ht.io.h5py.File(self.HDF5_OUT_PATH, 'r') as handle:
-                comparison = torch.tensor(handle[self.HDF5_DATASET], dtype=torch.int32)
+                comparison = torch.tensor(handle[self.HDF5_DATASET], dtype=torch.int32, device=device)
             self.assertTrue((local_data._DNDarray__array == comparison).all())
 
         # distributed data range
@@ -294,7 +294,7 @@ class TestIO(unittest.TestCase):
         ht.save_hdf5(split_data, self.HDF5_OUT_PATH, self.HDF5_DATASET)
         if split_data.comm.rank == 0:
             with ht.io.h5py.File(self.HDF5_OUT_PATH, 'r') as handle:
-                comparison = torch.tensor(handle[self.HDF5_DATASET], dtype=torch.int32)
+                comparison = torch.tensor(handle[self.HDF5_DATASET], dtype=torch.int32, device=device)
             self.assertTrue((local_data._DNDarray__array == comparison).all())
 
     def test_save_hdf5_exception(self):
