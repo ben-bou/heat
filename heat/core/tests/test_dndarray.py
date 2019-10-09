@@ -248,7 +248,7 @@ class TestDNDarray(unittest.TestCase):
         b = ht.array(a)
         self.assertIsInstance(b.numpy(), np.ndarray)
         self.assertEqual(b.numpy().shape, a.shape)
-        self.assertEqual(b.numpy().tolist(), b._DNDarray__array.numpy().tolist())
+        self.assertEqual(b.numpy().tolist(), b._DNDarray__array.cpu().numpy().tolist())
 
         a = ht.ones((10,8), dtype=ht.float32)
         b = np.ones((2,2)).astype('float32')  

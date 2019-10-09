@@ -154,7 +154,7 @@ class TestTrigonometrics(unittest.TestCase):
     def test_arcsin(self):
         # base elements
         elements = [-1., -0.83, -0.12, 0., 0.24, 0.67, 1.]
-        comparison = torch.tensor(elements, dtype=torch.float64).asin()
+        comparison = torch.tensor(elements, dtype=torch.float64, device=device).asin()
 
         # arcsin of float32
         float32_tensor = ht.array(elements, dtype=ht.float32)
@@ -186,7 +186,7 @@ class TestTrigonometrics(unittest.TestCase):
     def test_arccos(self):
         # base elements
         elements = [-1., -0.83, -0.12, 0., 0.24, 0.67, 1.]
-        comparison = torch.tensor(elements, dtype=torch.float64).acos()
+        comparison = torch.tensor(elements, dtype=torch.float64, device=device).acos()
 
         # arccos of float32
         float32_tensor = ht.array(elements, dtype=ht.float32)

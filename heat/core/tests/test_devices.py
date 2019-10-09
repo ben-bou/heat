@@ -1,4 +1,4 @@
-""" import unittest
+import unittest
 import os
 import heat as ht
 
@@ -33,15 +33,22 @@ class TestDevices(unittest.TestCase):
             self.assertIs(ht.sanitize_device(1), ht.cpu)
 
     def test_set_default_device(self):
-        ht.use_device('cpu')
-        self.assertIs(ht.get_device(), ht.cpu)
-        ht.use_device(ht.cpu)
-        self.assertIs(ht.get_device(), ht.cpu)
-        ht.use_device(None)
-        self.assertIs(ht.get_device(), ht.cpu)
+        if os.environ.get('DEVICE') == 'gpu':
+            ht.use_device('gpu')
+            self.assertIs(ht.get_device(), ht.gpu)
+            ht.use_device(ht.gpu)
+            self.assertIs(ht.get_device(), ht.gpu)
+            ht.use_device(None)
+            self.assertIs(ht.get_device(), ht.gpu)
+        else:
+            ht.use_device('cpu')
+            self.assertIs(ht.get_device(), ht.cpu)
+            ht.use_device(ht.cpu)
+            self.assertIs(ht.get_device(), ht.cpu)
+            ht.use_device(None)
+            self.assertIs(ht.get_device(), ht.cpu)
 
         with self.assertRaises(ValueError):
             ht.use_device('fpu')
         with self.assertRaises(ValueError):
             ht.use_device(1)
- """
