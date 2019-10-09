@@ -779,7 +779,7 @@ def unique(a, sorted=False, return_inverse=False, axis=None):
             res_shape[0] = 0
             inv_shape = [0]
         lres = torch.empty(res_shape, dtype=a.dtype.torch_type())
-        inverse_pos = torch.empty(inv_shape, dtype=torch.int64)
+        inverse_pos = torch.empty(inv_shape, dtype=torch.int64, device=a.device)
 
     else:
         lres, inverse_pos = torch.unique(local_data, sorted=sorted, return_inverse=True, dim=unique_axis)
@@ -877,7 +877,7 @@ def unique(a, sorted=False, return_inverse=False, axis=None):
             # Get indices of the unique vectors to share with all over processes
             indices = inverse_pos.reshape(-1).unique()
         else:
-            indices = torch.empty((max_uniques.item(),), dtype=inverse_pos.dtype)
+            indices = torch.empty((max_uniques.item(),), dtype=inverse_pos.dtype, device=a.device)
 
         a.comm.Bcast(indices, root=max_pos)
 

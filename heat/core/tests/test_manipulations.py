@@ -449,7 +449,7 @@ class TestManipulations(unittest.TestCase):
         self.assertTrue(torch.equal(result._DNDarray__array, exp_axis_zero))
         self.assertTrue(torch.equal(result_indices._DNDarray__array, exp_indices))
 
-        exp_axis_one, exp_indices = torch.arange(size).reshape(1, size).sort(dim=1, descending=True)
+        exp_axis_one, exp_indices = torch.arange(size, device=device).reshape(1, size).sort(dim=1, descending=True)
         result, result_indices = ht.sort(data, descending=True, axis=1)
         self.assertTrue(torch.equal(result._DNDarray__array, exp_axis_one))
         self.assertTrue(torch.equal(result_indices._DNDarray__array, exp_indices))
