@@ -596,7 +596,7 @@ class DNDarray:
         sl_dtype = self.dtype.torch_type()
         # units -> {pr, 1st index, 2nd index}
         lshape_map = factories.zeros((self.comm.size, len(self.gshape)), dtype=int)
-        lshape_map[self.comm.rank, :] = torch.tensor(self.lshape, device=self.device.torch_device)
+        lshape_map[self.comm.rank, :] = torch.Tensor(self.lshape, device=self.device.torch_device)
         lshape_map_comm = self.comm.Iallreduce(MPI.IN_PLACE, lshape_map, MPI.SUM)
 
         chunk_map = factories.zeros((self.comm.size, len(self.gshape)), dtype=int)
@@ -2471,7 +2471,7 @@ class DNDarray:
         elif isinstance(value, torch.Tensor):
             self.__array.__setitem__(key, value.data)
         elif isinstance(value, (list, tuple)):
-            value = torch.Tensor(value, device=self.device.torch_device)
+            value = torch.tensor(value, device=self.device.torch_device)
             self.__array.__setitem__(key, value.data)
         elif isinstance(value, np.ndarray):
             value = torch.from_numpy(value)
