@@ -596,7 +596,7 @@ class DNDarray:
         sl_dtype = self.dtype.torch_type()
         # units -> {pr, 1st index, 2nd index}
         lshape_map = factories.zeros((self.comm.size, len(self.gshape)), dtype=int)
-        lshape_map[self.comm.rank, :] = torch.Tensor(self.lshape, device=self.device.torch_device)
+        lshape_map[self.comm.rank, :] = torch.tensor(self.lshape, device=self.device.torch_device)
         lshape_map_comm = self.comm.Iallreduce(MPI.IN_PLACE, lshape_map, MPI.SUM)
 
         chunk_map = factories.zeros((self.comm.size, len(self.gshape)), dtype=int)
@@ -1333,7 +1333,7 @@ class DNDarray:
             chunk_end = chunk_slice[self.split].stop
             chunk_set = set(range(chunk_start, chunk_end))
 
-            arr = torch.Tensor(device=self.device.torch_device)
+            arr = torch.Tensor()
 
             if isinstance(key, int):  # if a sigular index is given and the tensor is split
                 gout = [0] * (len(self.gshape) - 1)

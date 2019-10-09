@@ -95,7 +95,7 @@ class TestCommunication(unittest.TestCase):
         self.assertTrue(vector_out._DNDarray__array.is_contiguous())
 
         # multi-dimensional torch tensor
-        tensor_data = torch.arange(3 * 4 * 5 * 6).reshape(3, 4, 5, 6) + 1
+        tensor_data = torch.arange(3 * 4 * 5 * 6, , device=device).reshape(3, 4, 5, 6) + 1
         tensor_out = torch.zeros_like(tensor_data, device=device)
 
         # test that target and destination are not equal
