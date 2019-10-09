@@ -778,11 +778,11 @@ def unique(a, sorted=False, return_inverse=False, axis=None):
             res_shape = list(local_data.shape)
             res_shape[0] = 0
             inv_shape = [0]
-        lres = torch.empty(res_shape, dtype=a.dtype.torch_type())
+        lres = torch.empty(res_shape, dtype=a.dtype.torch_type(), device=a.device)
         inverse_pos = torch.empty(inv_shape, dtype=torch.int64, device=a.device)
 
     else:
-        lres, inverse_pos = torch.unique(local_data, sorted=sorted, return_inverse=True, dim=unique_axis)
+        lres, inverse_pos = torch.unique(local_data, sorted=sorted, return_inverse=True, dim=unique_axis, device=a.device)
 
     # Share and gather the results with the other processes
     uniques = torch.tensor([lres.shape[0]]).to(torch.int32)
