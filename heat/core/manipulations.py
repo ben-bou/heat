@@ -584,7 +584,7 @@ def sort(a, axis=None, descending=False, out=None):
         final_indices,
         dtype=dndarray.types.int32,
         is_split=a.split,
-        device=a.device.torch_device,
+        device=a.device,
         comm=a.comm
     )
     if out is not None:
@@ -595,7 +595,7 @@ def sort(a, axis=None, descending=False, out=None):
             final_result,
             dtype=a.dtype,
             is_split=a.split,
-            device=a.device.torch_device,
+            device=a.device,
             comm=a.comm
         )
         return tensor, return_indices
@@ -893,7 +893,7 @@ def unique(a, sorted=False, return_inverse=False, axis=None):
         gres = gres.transpose(0, axis)
 
     split = split if a.split < len(gres.shape) else None
-    result = factories.array(gres, dtype=a.dtype, device=a.device.torch_device, comm=a.comm, split=split, is_split=is_split)
+    result = factories.array(gres, dtype=a.dtype, device=a.device, comm=a.comm, split=split, is_split=is_split)
     if split is not None:
         result.resplit(a.split)
 
