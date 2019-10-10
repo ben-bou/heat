@@ -78,6 +78,7 @@ class TestStatistics(unittest.TestCase):
 
         # 2D split tensor, across the axis, output tensor
         size = ht.MPI_WORLD.size * 2
+        raise ValueError("{}".format(size))
         data = ht.triu(ht.ones((size, size,), split=0), k=-1)
 
         output = ht.empty((size,))
