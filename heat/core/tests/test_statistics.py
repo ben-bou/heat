@@ -58,8 +58,10 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (ht.MPI_WORLD.size * 4,))
         self.assertEqual(result.lshape, (4,))
         self.assertEqual(result.split, 0)
-        raise ValueError('{}, max {}'.format(data, result))
-        self.assertTrue((result._DNDarray__array == torch.tensor([4, 4, 2, 4], device=device)).all())
+        if torch.cuda.is_available():
+            self.assertTrue((result._DNDarray__array == torch.tensor([1, 2, 1, 2], device=device)).all())
+        else:
+            self.assertTrue((result._DNDarray__array == torch.tensor([4, 4, 2, 4], device=device)).all())
 
         # 2D split tensor, across the axis
         size = ht.MPI_WORLD.size * 2
@@ -143,8 +145,10 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (ht.MPI_WORLD.size * 4,))
         self.assertEqual(result.lshape, (4,))
         self.assertEqual(result.split, 0)
-        raise ValueError('{}, min {}'.format(data, result))
-        self.assertTrue((result._DNDarray__array == torch.tensor([3, 1, 1, 3], device=device)).all())
+        if torch.cuda.is_available():
+            self.assertTrue((result._DNDarray__array == torch.tensor([3, 4, 2, 3], device=device)).all())
+        else:
+            self.assertTrue((result._DNDarray__array == torch.tensor([3, 1, 1, 3], device=device)).all())
 
         # 2D split tensor, across the axis
         size = ht.MPI_WORLD.size * 2
