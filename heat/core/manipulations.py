@@ -778,15 +778,15 @@ def unique(a, sorted=False, return_inverse=False, axis=None):
             res_shape = list(local_data.shape)
             res_shape[0] = 0
             inv_shape = [0]
-        lres = torch.empty(res_shape, dtype=a.dtype.torch_type(), device=a.device.torch_device)
-        inverse_pos = torch.empty(inv_shape, dtype=torch.int64, device=a.device.torch_device)
+        lres = torch.empty(res_shape, dtype=a.dtype.torch_type())
+        inverse_pos = torch.empty(inv_shape, dtype=torch.int64)
 
     else:
         lres, inverse_pos = torch.unique(local_data, sorted=sorted, return_inverse=True, dim=unique_axis)
 
     # Share and gather the results with the other processes
-    uniques = torch.tensor([lres.shape[0]]).to(dtype=torch.int32, device=a.device.torch_device)
-    uniques_buf = torch.empty((a.comm.Get_size(), ), dtype=torch.int32, device=a.device.torch_device)
+    uniques = torch.tensor([lres.shape[0]]).to(dtype=torch.int32)
+    uniques_buf = torch.empty((a.comm.Get_size(), ), dtype=torch.int32)
     a.comm.Allgather(uniques, uniques_buf)
 
     if axis is None or axis == a.split:
@@ -799,7 +799,7 @@ def unique(a, sorted=False, return_inverse=False, axis=None):
         # Gather all unique vectors
         counts = list(uniques_buf.tolist())
         displs = list([0] + uniques_buf.cumsum(0).tolist()[:-1])
-        gres_buf = torch.empty(output_dim, dtype=a.dtype.torch_type(), device=a.device.torch_device)
+        gres_buf = torch.empty(output_dim, dtype=a.dtype.torch_type())
         a.comm.Allgatherv(lres, (gres_buf, counts, displs,), recv_axis=0)
 
         if return_inverse:
@@ -814,7 +814,7 @@ def unique(a, sorted=False, return_inverse=False, axis=None):
             inverse_displs = [0] + list(np.cumsum(inverse_counts[:-1]))
             inverse_dim = list(inverse_pos.shape)
             inverse_dim[a.split] = a.gshape[a.split]
-            inverse_buf = torch.empty(inverse_dim, dtype=inverse_pos.dtype, device=a.device.torch_device)
+            inverse_buf = torch.empty(inverse_dim, dtype=inverse_pos.dtype)
 
             # Transpose data and buffer so we can use Allgatherv along axis=0 (axis=1 does not work properly yet)
             inverse_pos = inverse_pos.transpose(0, a.split)
@@ -853,11 +853,11 @@ def unique(a, sorted=False, return_inverse=False, axis=None):
                     inverse_indices[num] = g_inverse[index].tolist()
 
                 # Convert the flattened array back to the correct global shape of a
-                inverse_indices = torch.tensor(inverse_indices, device=a.device.torch_device).reshape(transposed_shape)
+                inverse_indices = torch.tensor(inverse_indices).reshape(transposed_shape)
                 inverse_indices = inverse_indices.transpose(0, a.split)
 
             else:
-                inverse_indices = torch.zeros_like(inverse_buf, device=a.device.torch_device)
+                inverse_indices = torch.zeros_like(inverse_buf)
                 steps = displs + [None]
 
                 # Algorithm that creates the correct list for the reverse_indices
@@ -877,7 +877,7 @@ def unique(a, sorted=False, return_inverse=False, axis=None):
             # Get indices of the unique vectors to share with all over processes
             indices = inverse_pos.reshape(-1).unique()
         else:
-            indices = torch.empty((max_uniques.item(),), dtype=inverse_pos.dtype, device=a.device.torch_device)
+            indices = torch.empty((max_uniques.item(),), dtype=inverse_pos.dtype)
 
         a.comm.Bcast(indices, root=max_pos)
 
