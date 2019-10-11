@@ -78,7 +78,7 @@ class TestStatistics(unittest.TestCase):
 
         # 2D split tensor, across the axis, output tensor
         size = ht.MPI_WORLD.size * 2
-        data = ht.triu(ht.ones((size, size,), split=0), k=-1)
+        data = ht.tril(ht.ones((size, size,), split=0), k=-1)
 
         output = ht.empty((size,))
         result = ht.argmax(data, axis=0, out=output)
@@ -162,8 +162,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (size,))
         self.assertEqual(result.lshape, (size,))
         self.assertEqual(result.split, None)
-        raise ValueError('{} {} {}'.format(data, result, result._DNDarray__array != 0))
-        self.assertTrue((result._DNDarray__array != 0).all())
+        self.assertTrue((result._DNDarray__array == torch.arange(0,size)).all())
 
         # 2D split tensor, across the axis, output tensor
         size = ht.MPI_WORLD.size * 2
