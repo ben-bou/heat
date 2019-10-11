@@ -899,6 +899,6 @@ def unique(a, sorted=False, return_inverse=False, axis=None):
 
     return_value = result
     if return_inverse:
-        return_value = [return_value, inverse_indices]
+        return_value = [return_value, inverse_indices.to(a.device.torch_device)]
 
     return return_value
