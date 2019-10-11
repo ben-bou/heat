@@ -427,7 +427,7 @@ class PytorchLasso():
         _, n = X.shape
 
         # Initialize model parameters 
-        theta = torch.zeros(n, 1, device=X.device.torch_device)
+        theta = torch.zeros(n, 1, device=X.device)
         wwtime = np.zeros((self.max_iter, n))
         # Looping until max number of iterations or convergence 
         for i in range(self.max_iter):
