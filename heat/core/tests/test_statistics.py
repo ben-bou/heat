@@ -89,6 +89,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(output.shape, (size,))
         self.assertEqual(output.lshape, (size,))
         self.assertEqual(output.split, None)
+        raise ValueError('{} {} {}'.format(data, result, result._DNDarray__array != 0))
         self.assertTrue((output._DNDarray__array != 0).all())
 
         # check exceptions
@@ -153,7 +154,6 @@ class TestStatistics(unittest.TestCase):
         # 2D split tensor, across the axis
         size = ht.MPI_WORLD.size * 2
         data = ht.triu(ht.ones((size, size,), split=0), k=1)
-        raise ValueError('{}'.format(data))
 
         result = ht.argmin(data, axis=0)
         self.assertIsInstance(result, ht.DNDarray)
@@ -162,6 +162,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (size,))
         self.assertEqual(result.lshape, (size,))
         self.assertEqual(result.split, None)
+        raise ValueError('{} {} {}'.format(data, result, result._DNDarray__array != 0))
         self.assertTrue((result._DNDarray__array != 0).all())
 
         # 2D split tensor, across the axis, output tensor
