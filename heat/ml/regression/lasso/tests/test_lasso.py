@@ -88,8 +88,8 @@ class TestLasso(unittest.TestCase):
         y = ht.load_hdf5(os.path.join(os.getcwd(), 'heat/datasets/data/diabetes.h5'), dataset='y')
 
         # Now the same stuff again in PyTorch
-        X = X._DNDarray__array.numpy()
-        y = y._DNDarray__array.numpy()
+        X = X._DNDarray__array.cpu().numpy()
+        y = y._DNDarray__array.cpu().numpy()
 
         # normalize dataset
         X = X / np.sqrt((np.mean(X**2, axis=0, keepdims=True))) 
