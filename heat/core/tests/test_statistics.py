@@ -162,7 +162,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (size,))
         self.assertEqual(result.lshape, (size,))
         self.assertEqual(result.split, None)
-        self.assertTrue((result._DNDarray__array == torch.arange(0,size)).all())
+        self.assertTrue((result._DNDarray__array == torch.arange(0,size, device=device)).all())
 
         # 2D split tensor, across the axis, output tensor
         size = ht.MPI_WORLD.size * 2
