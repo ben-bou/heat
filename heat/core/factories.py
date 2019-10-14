@@ -198,7 +198,6 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
     (0/2) tensor([1, 2, 3, 4])
     (1/2) tensor([1, 2, 3, 4])
     """
-
     # extract the internal tensor in case of a heat tensor
     if isinstance(obj, dndarray.DNDarray):
         obj = obj._DNDarray__array.to(device.torch_device)
@@ -210,12 +209,12 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
     # initialize the array
     if bool(copy):
         if isinstance(obj, torch.Tensor):
-            obj = obj.clone().detach().to(device.torch_device)
+            obj = obj.clone().detach()
         elif isinstance(obj, np.ndarray):
-            obj = torch.from_numpy(obj).to(device.torch_device)
+            obj = torch.from_numpy(obj)
         else:
             try:
-                obj = torch.tensor(obj, dtype=dtype.torch_type() if dtype is not None else None, device=device.torch_device)
+                obj = torch.tensor(obj, dtype=dtype.torch_type() if dtype is not None else None)
             except RuntimeError:
                 raise TypeError('invalid data of type {}'.format(type(obj)))
 
