@@ -479,13 +479,15 @@ class TestManipulations(unittest.TestCase):
 
         data = ht.array(tensor, split=0)
         exp_axis_zero = torch.tensor([[2, 3, 0], [0, 2, 3]], dtype=torch.int32, device=device)
-        indices_axis_zero = torch.tensor([[0, 2, 2], [3, 0, 0]], dtype=torch.int32, device=device)
+        if torch.cuda.is_available():
+            indices_axis_zero = torch.tensor([[0, 2, 2], [3, 2, 0]], dtype=torch.int32, device=device)
+        else:
+            indices_axis_zero = torch.tensor([[0, 2, 2], [3, 0, 0]], dtype=torch.int32, device=device)
         result, result_indices = ht.sort(data, axis=0)
         first = result[0]._DNDarray__array
         first_indices = result_indices[0]._DNDarray__array
         if rank == 0:
             self.assertTrue(torch.equal(first, exp_axis_zero))
-            raise ValueError("{} {}\n{} {}\n{} {}".format(result, result_indices, first, first_indices, exp_axis_zero, indices_axis_zero))
             self.assertTrue(torch.equal(first_indices, indices_axis_zero))
 
         data = ht.array(tensor, split=1)
@@ -496,6 +498,7 @@ class TestManipulations(unittest.TestCase):
         first_indices = result_indices[0]._DNDarray__array[:1]
         if rank == 0:
             self.assertTrue(torch.equal(first, exp_axis_one))
+            raise ValueError("{} {}\n{} {}\n{} {}".format(result, result_indices, first, first_indices, exp_axis_zero, indices_axis_zero))
             self.assertTrue(torch.equal(first_indices, indices_axis_one))
 
         data = ht.array(tensor, split=2)
