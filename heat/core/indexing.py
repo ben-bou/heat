@@ -68,7 +68,7 @@ def nonzero(a):
         return operations.__local_op(torch.nonzero, a, out=None, dtype=types.int)
     else:
         # a is split
-        lcl_nonzero = torch.nonzero(a._DNDarray__array, device=a.device.torch_device)
+        lcl_nonzero = torch.nonzero(a._DNDarray__array)
         _, _, slices = a.comm.chunk(a.shape, a.split)
         lcl_nonzero[..., a.split] += slices[a.split].start
         gout = list(lcl_nonzero.size())
