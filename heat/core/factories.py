@@ -198,10 +198,7 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
     (0/2) tensor([1, 2, 3, 4])
     (1/2) tensor([1, 2, 3, 4])
     """
-    # sanitize device and object
-    device = devices.sanitize_device(device)
-    comm = sanitize_comm(comm)
-  
+
     # extract the internal tensor in case of a heat tensor
     if isinstance(obj, dndarray.DNDarray):
         obj = obj._DNDarray__array.to(device.torch_device)
@@ -242,6 +239,10 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
     is_split = sanitize_axis(obj.shape, is_split)
     if split is not None and is_split is not None:
         raise ValueError('split and is_split are mutually exclusive parameters')
+
+    # sanitize device and object
+    device = devices.sanitize_device(device)
+    comm = sanitize_comm(comm)
 
     # determine the local and the global shape, if not split is given, they are identical
     lshape = np.array(obj.shape)
@@ -285,6 +286,8 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
         comm.Allreduce(MPI.IN_PLACE, ttl_shape, MPI.SUM)
         gshape[is_split] = ttl_shape[is_split]
         split = is_split
+        
+    obj.to(device.torch_device)
 
     return dndarray.DNDarray(obj, tuple(int(ele) for ele in gshape), dtype, split, device, comm)
 
