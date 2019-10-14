@@ -200,7 +200,7 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
     """
     # extract the internal tensor in case of a heat tensor
     if isinstance(obj, dndarray.DNDarray):
-        obj = obj._DNDarray__array.to(device.torch_device)
+        obj = obj._DNDarray__array
 
     # sanitize the data type
     if dtype is not None:
