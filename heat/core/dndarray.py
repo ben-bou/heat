@@ -54,8 +54,8 @@ class DNDarray:
         self.__device = devices.sanitize_device(device)
         self.__comm = comm
 
-        if isinstance(self.__array, torch.Tensor) and device is not None:
-            self.__array = array.to(device.torch_device)
+        if isinstance(self.__array, torch.Tensor):
+            self.__array = array.to(self.__device.torch_device)
 
     @property
     def comm(self):
