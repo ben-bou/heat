@@ -74,6 +74,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (size,))
         self.assertEqual(result.lshape, (size,))
         self.assertEqual(result.split, None)
+        raise ValueError('{} {} {}'.format(data, result, result._DNDarray__array != 0))
         self.assertTrue((result._DNDarray__array != 0).all())
 
         # 2D split tensor, across the axis, output tensor
