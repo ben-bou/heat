@@ -81,8 +81,7 @@ class TestStatistics(unittest.TestCase):
 
         # 2D split tensor, across the axis, output tensor
         size = ht.MPI_WORLD.size * 2
-        #data = ht.tril(ht.ones((size, size,), split=0), k=-1)
-        data = ht.tril(ht.ones((size, size,), split=0), k=1)
+        data = ht.tril(ht.ones((size, size,), split=0), k=-1)
 
         output = ht.empty((size,))
         result = ht.argmax(data, axis=0, out=output)
@@ -94,7 +93,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(output.lshape, (size,))
         self.assertEqual(output.split, None)
         if torch.cuda.is_available():
-            self.assertTrue((output._DNDarray__array == torch.arange(0,size, device=device)).all())
+            self.assertTrue((output._DNDarray__array == torch.tensor(x%size for range(0,size), device=device)).all())
         else:
             self.assertTrue((output._DNDarray__array != 0).all())
 
