@@ -93,7 +93,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(output.lshape, (size,))
         self.assertEqual(output.split, None)
         if torch.cuda.is_available():
-            self.assertTrue((output._DNDarray__array == torch.tensor(x%size for range(0,size), device=device)).all())
+            self.assertTrue((output._DNDarray__array == torch.tensor([x%size for range(0,size)], device=device)).all())
         else:
             self.assertTrue((output._DNDarray__array != 0).all())
 
