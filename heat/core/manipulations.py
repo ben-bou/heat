@@ -581,7 +581,7 @@ def sort(a, axis=None, descending=False, out=None):
         final_indices = final_indices.transpose(0, axis)
 
     return_indices = factories.array(
-        final_indices,
+        final_indices.to(a.device.torch_device),
         dtype=dndarray.types.int32,
         is_split=a.split,
         device=a.device,
@@ -592,7 +592,7 @@ def sort(a, axis=None, descending=False, out=None):
         return return_indices
     else:
         tensor = factories.array(
-            final_result,
+            final_result.to(device.torch_device),
             dtype=a.dtype,
             is_split=a.split,
             device=a.device,

@@ -285,10 +285,8 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
         comm.Allreduce(MPI.IN_PLACE, ttl_shape, MPI.SUM)
         gshape[is_split] = ttl_shape[is_split]
         split = is_split
-        
-    obj = obj.to(device.torch_device)
 
-    return dndarray.DNDarray(obj, tuple(int(ele) for ele in gshape), dtype, split, device, comm)
+    return dndarray.DNDarray(obj.to(device.torch_device), tuple(int(ele) for ele in gshape), dtype, split, device, comm)
 
 
 def empty(shape, dtype=types.float32, split=None, device=None, comm=None):
