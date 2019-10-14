@@ -47,13 +47,15 @@ class LocalIndex:
 
 class DNDarray:
     def __init__(self, array, gshape, dtype, split, device, comm):
-        #self.__array = array
+        self.__array = array
         self.__gshape = gshape
         self.__dtype = dtype
         self.__split = split
-        self.__device = devices.sanitize_device(device)
+        self.__device = device
         self.__comm = comm
-        self.__array = array.to(self.__device.torch_device)
+
+        if isinstance(self.__array, torch.Tensor):
+            self.__array = array.to(devices.sanitize_device(self.__device.torch_device))
 
     @property
     def comm(self):
