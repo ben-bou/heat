@@ -498,7 +498,7 @@ class TestManipulations(unittest.TestCase):
         first_indices = result_indices[0]._DNDarray__array[:1]
         if rank == 0:
             self.assertTrue(torch.equal(first, exp_axis_one))
-            raise ValueError("{} {}\n{} {}\n{} {}".format(result, result_indices, first, first_indices, exp_axis_zero, indices_axis_zero))
+            raise ValueError("{} {}\n{} {}\n{} {}".format(result, result_indices, first, first_indices, exp_axis_one, indices_axis_one))
             self.assertTrue(torch.equal(first_indices, indices_axis_one))
 
         data = ht.array(tensor, split=2)
