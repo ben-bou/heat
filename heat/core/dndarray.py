@@ -51,10 +51,9 @@ class DNDarray:
         self.__gshape = gshape
         self.__dtype = dtype
         self.__split = split
-        self.__device = device
+        self.__device = devices.sanitize_device(device)
         self.__comm = comm
-        device = devices.sanitize_device(device)
-        self.__array = array.to(device)
+        self.__array = array.to(self.__device.torch_device)
 
     @property
     def comm(self):
