@@ -310,7 +310,7 @@ def matmul(a, b):
                 if b.comm.rank == pr:
                     b_lp_data[pr] = b._DNDarray__array
                 else:
-                    b_lp_data[pr] = torch.zeros((lshape_map[pr, 1, 0].item(), lshape_map[pr, 1, 1].item()), dtype=b.dtype.torch_type())
+                    b_lp_data[pr] = torch.zeros((lshape_map[pr, 1, 0].item(), lshape_map[pr, 1, 1].item()), dtype=b.dtype.torch_type(), device=b.device.torch_device)
 
                 # sending a to all nodes for b to operate with
                 req[pr] = b.comm.Ibcast(b_lp_data[pr], root=pr)
