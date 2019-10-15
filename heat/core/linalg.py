@@ -122,14 +122,14 @@ def matmul(a, b):
             a_idx = a.comm.chunk(a.shape, a.split)[2]
             c += a._DNDarray__array @ b._DNDarray__array[a_idx[1].start:a_idx[1].start + a.lshape[-1], :]
             a.comm.Allreduce(MPI.IN_PLACE, c, MPI.SUM)
-            return factories.array(c, split=a.split if b.gshape[1] > 1 else 0)
+            return factories.array(c.to(a.device.torch_device), split=a.split if b.gshape[1] > 1 else 0)
 
         elif a.split is None and b.split == 0:
             c = torch.zeros((a.gshape[-2], b.gshape[1]), dtype=c_type.torch_type())
             b_idx = b.comm.chunk(b.shape, b.split)[2]
             c += a._DNDarray__array[:, b_idx[0].start:b_idx[0].start + b.lshape[0]] @ b._DNDarray__array
             b.comm.Allreduce(MPI.IN_PLACE, c, MPI.SUM)
-            return factories.array(c, split=b.split if a.gshape[-2] > 1 else 1)
+            return factories.array(c.to(b.device.torch_device), split=b.split if a.gshape[-2] > 1 else 1)
 
         elif a.split == 0 and b.split == 0:
             split_0_flag = True
@@ -475,7 +475,7 @@ def matmul(a, b):
 
             a.comm.Allreduce(MPI.IN_PLACE, res, MPI.SUM)
 
-            return factories.array(res, split=a.split if b.gshape[-1] > 1 else 0)
+            return factories.array(res.to(a.device.torch_device), split=a.split if b.gshape[-1] > 1 else 0)
 
 
 def transpose(a, axes=None):
