@@ -286,7 +286,7 @@ def array(obj, dtype=None, copy=True, ndmin=0, split=None, is_split=None, device
         gshape[is_split] = ttl_shape[is_split]
         split = is_split
 
-    return dndarray.DNDarray(obj.to(device.torch_device), tuple(int(ele) for ele in gshape), dtype, split, device, comm)
+    return dndarray.DNDarray(obj, tuple(int(ele) for ele in gshape), dtype, split, device, comm)
 
 
 def empty(shape, dtype=types.float32, split=None, device=None, comm=None):
