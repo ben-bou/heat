@@ -120,8 +120,8 @@ class TestLinalg(unittest.TestCase):
             self.assertEqual(ret00.split, 1)
 
             # splits 11 (torch)
-            a = ht.array(torch.ones((n, m)), split=1, device=device)
-            b = ht.array(torch.ones((j, k)), split=1, device=device)
+            a = ht.array(torch.ones((n, m), device=device), split=1)
+            b = ht.array(torch.ones((j, k), device=device), split=1)
             a[0] = ht.arange(1, m + 1)
             a[:, -1] = ht.arange(1, n + 1)
             b[0] = ht.arange(1, k + 1)
