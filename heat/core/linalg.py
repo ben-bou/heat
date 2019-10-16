@@ -118,14 +118,14 @@ def matmul(a, b):
             return c
 
         elif a.split == 1 and b.split is None:
-            c = torch.zeros((a.gshape[-2], b.gshape[1]), dtype=c_type.torch_type())
+            c = torch.zeros((a.gshape[-2], b.gshape[1]), dtype=c_type.torch_type(), device=a.device.torch_device)
             a_idx = a.comm.chunk(a.shape, a.split)[2]
             c += a._DNDarray__array @ b._DNDarray__array[a_idx[1].start:a_idx[1].start + a.lshape[-1], :]
             a.comm.Allreduce(MPI.IN_PLACE, c, MPI.SUM)
             return factories.array(c.to(a.device.torch_device), split=a.split if b.gshape[1] > 1 else 0)
 
         elif a.split is None and b.split == 0:
-            c = torch.zeros((a.gshape[-2], b.gshape[1]), dtype=c_type.torch_type())
+            c = torch.zeros((a.gshape[-2], b.gshape[1]), dtype=c_type.torch_type(), device=a.device.torch_device)
             b_idx = b.comm.chunk(b.shape, b.split)[2]
             c += a._DNDarray__array[:, b_idx[0].start:b_idx[0].start + b.lshape[0]] @ b._DNDarray__array
             b.comm.Allreduce(MPI.IN_PLACE, c, MPI.SUM)
