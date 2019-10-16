@@ -1,4 +1,4 @@
-""" import torch
+import torch
 import unittest
 import numpy as np
 import heat as ht
@@ -193,4 +193,3 @@ class TestRounding(unittest.TestCase):
             ht.trunc([0, 1, 2, 3])
         with self.assertRaises(TypeError):
             ht.trunc(object())
- """

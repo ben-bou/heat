@@ -1,4 +1,4 @@
-""" import torch
+import torch
 import unittest
 from itertools import combinations
 import os
@@ -815,4 +815,3 @@ class TestStatistics(unittest.TestCase):
         for sp in [None, 0, 1]:
             iris = ht.load_hdf5('heat/datasets/data/iris.h5', 'data', split=sp)
             self.assertTrue(ht.allclose(ht.var(iris, bessel=True), 3.90318519755147))
- """
