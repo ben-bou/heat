@@ -1473,7 +1473,7 @@ class DNDarray:
             tensor_on_device : ht.DNDarray
                 A copy of this object on the GPU.
             """
-            self.__array = self.__array.cuda(devices.gpu_index())
+            self.__array = self.__array.cuda(devices.gpu)
             return self
 
     def __gt__(self, other):
