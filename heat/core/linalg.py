@@ -292,7 +292,7 @@ def matmul(a, b):
             b_rem_locs0 = (rem_map[:, 1, 0] == 1).nonzero()  # locations of the remainders in b
             a_rem_locs0 = (rem_map[:, 0, 0] == 1).nonzero()
             a_node_rem_s0 = a._DNDarray__array[:mB, kB:(kB + 1) * b_rem_locs0.numel():kB + 1]  # remainders for a in the
-            b_rem = torch.empty(b_rem_locs0.numel(), b.lshape[-1], dtype=a.dtype.torch_type())
+            b_rem = torch.empty(b_rem_locs0.numel(), b.lshape[-1], dtype=a.dtype.torch_type(), device=b.device.torch_device)
 
             # this if/elif/else loop is for the handling of
             if a.comm.rank in a_rem_locs0:
@@ -365,7 +365,7 @@ def matmul(a, b):
             b_rem_locs1 = (rem_map[:, 1, 1] == 1).nonzero()  # locations of the remainders in b
             a_rem_locs1 = (rem_map[:, 0, 1] == 1).nonzero()
             b_node_rem_s1 = b._DNDarray__array[kB:(kB + 1) * a_rem_locs1.numel():kB + 1, : nB]  # remainders for a in the
-            a_rem = torch.empty(a.lshape[-2], a_rem_locs1.numel(), dtype=b.dtype.torch_type())
+            a_rem = torch.empty(a.lshape[-2], a_rem_locs1.numel(), dtype=b.dtype.torch_type(), device=a.device.torch_device)
 
             # this if/elif/else loop is for the handling of
             if b.comm.rank in b_rem_locs1:
