@@ -128,7 +128,7 @@ class HeatLasso():
                 
                 y_est = (X @ theta)[:, 0] 
                
-                rho = (X[:,j]*(y - y_est + theta[j].copy() * X[:,j])).mean()
+                rho = (X[:,j]*(y - y_est + theta[j].copy().gpu() * X[:,j])).mean()
                 
                 # Intercept parameter theta[0] not be regularized 
                 if j == 0: 

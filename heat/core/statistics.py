@@ -596,7 +596,7 @@ def mean(x, axis=None):
             The calculated means.
         """
         if x.lshape[x.split] != 0:
-            mu = torch.mean(x._DNDarray__array, out=None, dim=axis, device=x.device.torch_device)
+            mu = torch.mean(x._DNDarray__array, out=None, dim=axis)
         else:
             mu = factories.zeros(output_shape_i)
 
