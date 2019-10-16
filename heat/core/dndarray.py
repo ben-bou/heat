@@ -55,9 +55,7 @@ class DNDarray:
         self.__comm = comm
 
         if isinstance(self.__array, torch.Tensor) and isinstance(device, devices.Device) and self.__array.device.type not in self.__device.torch_device:
-            print(self.__array.device.index, self.__array.device.type)
             self.__array = self.__array.to(devices.sanitize_device(self.__device).torch_device)
-            print(self.__array.device.index, self.__array.device.type)
 
     @property
     def comm(self):

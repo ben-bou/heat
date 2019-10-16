@@ -468,7 +468,7 @@ def matmul(a, b):
             # for this case, only a sum is needed at the end
             a_rem_locs1 = (rem_map[:, 0, 1] == 1).nonzero()
             b_rem_locs0 = (rem_map[:, 1, 0] == 1).nonzero()  # locations of the remainders in b
-            res = torch.zeros((a.gshape[-2], b.gshape[1]), dtype=c_type.torch_type())
+            res = torch.zeros((a.gshape[-2], b.gshape[1]), dtype=c_type.torch_type(), device=c.device.torch_device)
             res += a._DNDarray__array[:mB, :kB] @ b._DNDarray__array[:kB, :nB]
             if a.comm.rank in a_rem_locs1 and b.comm.rank in b_rem_locs0:
                 res += a._DNDarray__array[:, -1, None] @ b._DNDarray__array[None, -1, :]  # these Nones are used to change the dims
