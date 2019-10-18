@@ -289,7 +289,7 @@ def average(x, axis=None, weights=None, returned=False):
     if weights is not None and not isinstance(weights, dndarray.DNDarray):
         raise TypeError('expected weights to be a ht.DNDarray, but was {}'.format(type(x)))
     axis = stride_tricks.sanitize_axis(x.shape, axis)
-    print ("begin ", weights)
+
     if weights is None:
         result = mean(x, axis)
         num_elements = x.gnumel/result.gnumel
@@ -334,7 +334,6 @@ def average(x, axis=None, weights=None, returned=False):
             if wgt.gshape[x.split] != 1:
                 wgt.resplit(x.split)
 
-        print ("before ", wgt)
         result = (x * wgt).sum(axis=axis) / cumwgt
 
     if returned:

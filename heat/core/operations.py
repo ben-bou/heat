@@ -34,6 +34,7 @@ def __binary_op(operation, t1, t2):
     result: ht.DNDarray
         A tensor containing the results of element-wise operation.
     """
+    print (t1, t2, sep:'/n')
 
     if np.isscalar(t1):
         try:
