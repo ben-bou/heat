@@ -787,6 +787,7 @@ class TestStatistics(unittest.TestCase):
             hold.append(None)
             for i in hold:  # loop over the number of dimensions of the test array
                 z = ht.ones(dimensions, split=i)
+                print (z)
                 res = z.var()
                 total_dims_list = list(z.shape)
                 print ("total:", res)
