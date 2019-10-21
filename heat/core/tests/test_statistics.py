@@ -789,9 +789,11 @@ class TestStatistics(unittest.TestCase):
                 z = ht.ones(dimensions, split=i)
                 res = z.var()
                 total_dims_list = list(z.shape)
+                print ("total:", res)
                 self.assertTrue((res == 0).all())
                 for it in range(len(z.shape)):  # loop over the different single dimensions for mean
                     res = z.var(axis=it)
+                    print ("axis:", res)
                     self.assertTrue((res == 0).all())
                     target_dims = [total_dims_list[q] for q in range(len(total_dims_list)) if q != it]
                     if not target_dims:
