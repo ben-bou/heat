@@ -74,8 +74,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (size,))
         self.assertEqual(result.lshape, (size,))
         self.assertEqual(result.split, None)
-        if torch.cuda.is_available() and result.device == ht.gpu:
-            print (data, result)
+        if torch.cuda.is_available() and result.device == ht.gpu and size < 3:
             self.assertTrue((result._DNDarray__array == torch.tensor([x%size for x in range(1,size+1)], device=device)).all())
         else:
             self.assertTrue((result._DNDarray__array != 0).all())
