@@ -806,10 +806,10 @@ class TestStatistics(unittest.TestCase):
 
                     if i == it:
                         res = z.var(axis=it)
-                        self.assertTrue((res == 0).all())
+                        self.assertTrue(ht.allclose(res, 0))
                 z = ht.ones(dimensions, split=i)
                 res = z.var(bessel=False)
-                self.assertTrue((res == 0).all())
+                self.assertTrue(ht.allclose(res, 0))
 
         # values for the iris dataset var measured by libreoffice calc
         for sp in [None, 0, 1]:
