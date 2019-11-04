@@ -787,11 +787,9 @@ class TestStatistics(unittest.TestCase):
             hold.append(None)
             for i in hold:  # loop over the number of dimensions of the test array
                 z = ht.ones(dimensions, split=i)
-                print (z)
                 res = z.var()
                 total_dims_list = list(z.shape)
-                print ("total:", res)
-                self.assertTrue((res == 0).all())
+                self.assertTrue(ht.allclose(res, 0))
                 for it in range(len(z.shape)):  # loop over the different single dimensions for mean
                     res = z.var(axis=it)
                     print ("axis:", res)
