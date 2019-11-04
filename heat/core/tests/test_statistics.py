@@ -792,8 +792,7 @@ class TestStatistics(unittest.TestCase):
                 self.assertTrue(ht.allclose(res, 0))
                 for it in range(len(z.shape)):  # loop over the different single dimensions for mean
                     res = z.var(axis=it)
-                    print ("axis:", res)
-                    self.assertTrue((res == 0).all())
+                    self.assertTrue(ht.allclose(res, 0))
                     target_dims = [total_dims_list[q] for q in range(len(total_dims_list)) if q != it]
                     if not target_dims:
                         target_dims = (1,)
