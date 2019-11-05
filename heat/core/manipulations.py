@@ -431,7 +431,7 @@ def sort(a, axis=None, descending=False, out=None):
         a.comm.Gatherv(local_pivots, (pivot_buffer, gather_counts, gather_displs), root=0)
 
         pivot_dim[0] = size - 1
-        global_pivots = torch.empty(pivot_dim, dtype=a.dtype.torch_type())
+        global_pivots = torch.empty(pivot_dim, dtype=a.dtype.torch_type(), device=a.device.torch_device)
 
         # root process creates new pivots and shares them with other processes
         if rank is 0:
