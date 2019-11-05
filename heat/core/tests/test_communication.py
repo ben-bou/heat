@@ -2334,7 +2334,7 @@ class TestCommunication(unittest.TestCase):
         test1 = self.sorted3Dtensor.copy()
         test1.resplit_(axis=2)
         comparison1 = self.sorted3Dtensor.copy()
-        comparison1.resplit(axis=1)
+        comparison1.resplit_(axis=1)
         redistributed1 = torch.empty(
             comparison1.lshape, dtype=test1.dtype.torch_type(), device=device
         )
@@ -2383,7 +2383,7 @@ class TestCommunication(unittest.TestCase):
         test4 = self.sorted3Dtensor.copy()
         test4.resplit_(axis=2)
         comparison4 = self.sorted3Dtensor.copy()
-        comparison4.resplit(axis=0)
+        comparison4.resplit_(axis=0)
         redistributed4 = torch.empty(
             comparison4.lshape, dtype=test4.dtype.torch_type(), device=device
         )
