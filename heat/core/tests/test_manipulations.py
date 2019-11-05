@@ -424,7 +424,7 @@ class TestManipulations(unittest.TestCase):
             ht.empty((3, 4, 5,)).expand_dims(4)
         with self.assertRaises(ValueError):
             ht.empty((3, 4, 5,)).expand_dims(-5)
-"""
+
     def test_sort(self):
         size = ht.MPI_WORLD.size
         rank = ht.MPI_WORLD.rank
@@ -529,7 +529,7 @@ class TestManipulations(unittest.TestCase):
             for idx in range(c - 1):
                 if rank == i:
                     self.assertTrue(torch.lt(result._DNDarray__array[idx], result._DNDarray__array[idx + 1]).all())
-
+"""
     def test_squeeze(self):
         torch.manual_seed(1)
         data = ht.random.randn(1, 4, 5, 1)
