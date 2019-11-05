@@ -189,7 +189,7 @@ def concatenate(arrays, axis=0):
                         if arr0.comm.rank == pr and snt:
                             shp = list(arr0.gshape)
                             shp[arr0.split] = snt
-                            data = torch.zeros(shp, dtype=out_dtype.torch_type())
+                            data = torch.zeros(shp, dtype=out_dtype.torch_type(), device=arr0.device.torch_device)
 
                             arr0.comm.Recv(data, source=spr, tag=pr + arr0.comm.size + spr)
                             arr0._DNDarray__array = torch.cat((arr0._DNDarray__array, data), dim=arr0.split)
@@ -221,7 +221,7 @@ def concatenate(arrays, axis=0):
                         if arr1.comm.rank == pr and snt:
                             shp = list(arr1.gshape)
                             shp[axis] = snt
-                            data = torch.zeros(shp, dtype=out_dtype.torch_type())
+                            data = torch.zeros(shp, dtype=out_dtype.torch_type(), device=arr1.device.torch_device)
                             arr1.comm.Recv(data, source=spr, tag=pr + arr1.comm.size + spr)
                             arr1._DNDarray__array = torch.cat((data, arr1._DNDarray__array), dim=axis)
                         lshape_map[1, pr, axis] += snt
