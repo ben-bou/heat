@@ -2,7 +2,8 @@ import unittest
 import os
 import heat as ht
 
-ht.use_device(os.environ.get('DEVICE'))
+ht.use_device(os.environ.get("DEVICE"))
+
 
 class TestMemory(unittest.TestCase):
     def test_copy(self):
@@ -16,4 +17,4 @@ class TestMemory(unittest.TestCase):
 
         # test exceptions
         with self.assertRaises(TypeError):
-            ht.copy('hello world')
+            ht.copy("hello world")

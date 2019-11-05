@@ -4,12 +4,13 @@ import numpy as np
 import heat as ht
 import os
 
-if os.environ.get('DEVICE') == 'gpu':
+if os.environ.get("DEVICE") == "gpu":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
 else:
     device = torch.device("cpu")
     ht.use_device("cpu")
+
 
 class TestRounding(unittest.TestCase):
     def test_abs(self):
@@ -35,10 +36,10 @@ class TestRounding(unittest.TestCase):
         self.assertEqual(absolute_values.dtype, ht.float32)
         self.assertEqual(absolute_values.sum(axis=0), 100)
         # for fabs
-        self.assertEqual(int8_absolute_values_fabs.sum(axis=0), 100.)
-        self.assertEqual(int16_absolute_values_fabs.sum(axis=0), 100.)
-        self.assertEqual(int32_absolute_values_fabs.sum(axis=0), 100.)
-        self.assertEqual(int64_absolute_values_fabs.sum(axis=0), 100.)
+        self.assertEqual(int8_absolute_values_fabs.sum(axis=0), 100.0)
+        self.assertEqual(int16_absolute_values_fabs.sum(axis=0), 100.0)
+        self.assertEqual(int32_absolute_values_fabs.sum(axis=0), 100.0)
+        self.assertEqual(int64_absolute_values_fabs.sum(axis=0), 100.0)
         self.assertEqual(float32_absolute_values_fabs.sum(axis=0), 110.5)
         self.assertEqual(float64_absolute_values_fabs.sum(axis=0), 110.5)
 
@@ -74,14 +75,14 @@ class TestRounding(unittest.TestCase):
         # exceptions
         # for abs==absolute
         with self.assertRaises(TypeError):
-            ht.absolute('hello')
+            ht.absolute("hello")
         with self.assertRaises(TypeError):
             float32_tensor.abs(out=1)
         with self.assertRaises(TypeError):
             float32_tensor.absolute(out=float32_tensor, dtype=3.2)
         # for fabs
         with self.assertRaises(TypeError):
-            ht.fabs('hello')
+            ht.fabs("hello")
         with self.assertRaises(TypeError):
             float32_tensor_fabs.fabs(out=1)
 

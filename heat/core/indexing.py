@@ -1,15 +1,11 @@
 import torch
-import numpy as np
 
 from .communication import MPI
 from . import dndarray
-from . import operations
+from . import factories
 from . import types
 
-__all__ = [
-    'nonzero',
-    'where'
-]
+__all__ = ["nonzero", "where"]
 
 
 def nonzero(a):
@@ -65,7 +61,9 @@ def nonzero(a):
 
     if a.split is None:
         # if there is no split then just return the values from torch
-        return operations.__local_op(torch.nonzero, a, out=None, dtype=types.int)
+        return factories.array(
+            torch.nonzero(a._DNDarray__array), is_split=a.split, device=a.device, comm=a.comm
+        )
     else:
         # a is split
         lcl_nonzero = torch.nonzero(a._DNDarray__array)
@@ -73,8 +71,7 @@ def nonzero(a):
         lcl_nonzero[..., a.split] += slices[a.split].start
         gout = list(lcl_nonzero.size())
         gout[0] = a.comm.allreduce(gout[0], MPI.SUM)
-
-        return dndarray.DNDarray(lcl_nonzero, gshape=tuple(gout), dtype=types.int, split=0, device=a.device, comm=a.comm)
+        return factories.array(lcl_nonzero, is_split=0, device=a.device, comm=a.comm)
 
 
 def where(cond, x=None, y=None):
@@ -113,13 +110,23 @@ def where(cond, x=None, y=None):
     [1/1] tensor([[ 0.,  3., -1.]])
 
     """
-    if cond.split is not None and (isinstance(x, dndarray.DNDarray) or isinstance(y, dndarray.DNDarray)):
-        if (isinstance(x, dndarray.DNDarray) and cond.split != x.split) or (isinstance(y, dndarray.DNDarray) and cond.split != y.split):
+    if cond.split is not None and (
+        isinstance(x, dndarray.DNDarray) or isinstance(y, dndarray.DNDarray)
+    ):
+        if (isinstance(x, dndarray.DNDarray) and cond.split != x.split) or (
+            isinstance(y, dndarray.DNDarray) and cond.split != y.split
+        ):
             raise NotImplementedError("binary op not implemented for different split axes")
-    if isinstance(x, (dndarray.DNDarray, int, float)) and isinstance(y, (dndarray.DNDarray, int, float)):
+    if isinstance(x, (dndarray.DNDarray, int, float)) and isinstance(
+        y, (dndarray.DNDarray, int, float)
+    ):
         cond = types.float(cond)
         return (cond == 0) * y + cond * x
     elif x is None and y is None:
         return nonzero(cond)
     else:
-        raise TypeError("either both or neither x and y must be given and both must be DNDarrays or ints({}, {})".format(type(x), type(y)))
+        raise TypeError(
+            "either both or neither x and y must be given and both must be DNDarrays or ints({}, {})".format(
+                type(x), type(y)
+            )
+        )

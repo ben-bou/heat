@@ -4,18 +4,21 @@ import math
 import heat as ht
 import os
 
-if os.environ.get('DEVICE') == 'gpu':
+if os.environ.get("DEVICE") == "gpu":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     ht.use_device("gpu" if torch.cuda.is_available() else "cpu")
 else:
     device = torch.device("cpu")
     ht.use_device("cpu")
 
+
 class TestTrigonometrics(unittest.TestCase):
     def test_rad2deg(self):
         # base elements
-        elements = [0., 0.2, 0.6, 0.9, 1.2, 2.7, 3.14]
-        comparison = 180. * torch.tensor(elements, dtype=torch.float64, device=device) / 3.141592653589793
+        elements = [0.0, 0.2, 0.6, 0.9, 1.2, 2.7, 3.14]
+        comparison = (
+            180.0 * torch.tensor(elements, dtype=torch.float64, device=device) / 3.141592653589793
+        )
 
         # rad2deg with float32
         float32_tensor = ht.array(elements, dtype=ht.float32)
@@ -23,7 +26,7 @@ class TestTrigonometrics(unittest.TestCase):
         self.assertIsInstance(float32_rad2deg, ht.DNDarray)
         self.assertEqual(float32_rad2deg.dtype, ht.float32)
         self.assertTrue(torch.allclose(float32_rad2deg._DNDarray__array.double(), comparison))
-  
+
         # rad2deg with float64
         float64_tensor = ht.array(elements, dtype=ht.float64)
         float64_rad2deg = ht.rad2deg(float64_tensor)
@@ -35,12 +38,14 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.rad2deg([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.rad2deg('hello world')
+            ht.rad2deg("hello world")
 
     def test_degrees(self):
         # base elements
-        elements = [0., 0.2, 0.6, 0.9, 1.2, 2.7, 3.14]
-        comparison = 180. * torch.tensor(elements,dtype=torch.float64, device=device) / 3.141592653589793
+        elements = [0.0, 0.2, 0.6, 0.9, 1.2, 2.7, 3.14]
+        comparison = (
+            180.0 * torch.tensor(elements, dtype=torch.float64, device=device) / 3.141592653589793
+        )
 
         # degrees with float32
         float32_tensor = ht.array(elements, dtype=ht.float32)
@@ -48,7 +53,7 @@ class TestTrigonometrics(unittest.TestCase):
         self.assertIsInstance(float32_degrees, ht.DNDarray)
         self.assertEqual(float32_degrees.dtype, ht.float32)
         self.assertTrue(torch.allclose(float32_degrees._DNDarray__array.double(), comparison))
-  
+
         # degrees with float64
         float64_tensor = ht.array(elements, dtype=ht.float64)
         float64_degrees = ht.degrees(float64_tensor)
@@ -60,12 +65,14 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.degrees([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.degrees('hello world')
+            ht.degrees("hello world")
 
     def test_deg2rad(self):
         # base elements
-        elements = [0., 20., 45., 78., 94., 120., 180., 270., 311.]
-        comparison = 3.141592653589793 * torch.tensor(elements, dtype=torch.float64, device=device) / 180.
+        elements = [0.0, 20.0, 45.0, 78.0, 94.0, 120.0, 180.0, 270.0, 311.0]
+        comparison = (
+            3.141592653589793 * torch.tensor(elements, dtype=torch.float64, device=device) / 180.0
+        )
 
         # deg2rad with float32
         float32_tensor = ht.array(elements, dtype=ht.float32)
@@ -73,7 +80,7 @@ class TestTrigonometrics(unittest.TestCase):
         self.assertIsInstance(float32_deg2rad, ht.DNDarray)
         self.assertEqual(float32_deg2rad.dtype, ht.float32)
         self.assertTrue(torch.allclose(float32_deg2rad._DNDarray__array.double(), comparison))
-  
+
         # deg2rad with float64
         float64_tensor = ht.array(elements, dtype=ht.float64)
         float64_deg2rad = ht.deg2rad(float64_tensor)
@@ -85,12 +92,14 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.deg2rad([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.deg2rad('hello world')
+            ht.deg2rad("hello world")
 
     def test_radians(self):
         # base elements
-        elements = [0., 20., 45., 78., 94., 120., 180., 270., 311.]
-        comparison = 3.141592653589793 * torch.tensor(elements, dtype=torch.float64, device=device) / 180.
+        elements = [0.0, 20.0, 45.0, 78.0, 94.0, 120.0, 180.0, 270.0, 311.0]
+        comparison = (
+            3.141592653589793 * torch.tensor(elements, dtype=torch.float64, device=device) / 180.0
+        )
 
         # radians with float32
         float32_tensor = ht.array(elements, dtype=ht.float32)
@@ -98,7 +107,7 @@ class TestTrigonometrics(unittest.TestCase):
         self.assertIsInstance(float32_radians, ht.DNDarray)
         self.assertEqual(float32_radians.dtype, ht.float32)
         self.assertTrue(torch.allclose(float32_radians._DNDarray__array.double(), comparison))
-  
+
         # radians with float64
         float64_tensor = ht.array(elements, dtype=ht.float64)
         float64_radians = ht.radians(float64_tensor)
@@ -110,8 +119,8 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.radians([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.radians('hello world')
-        
+            ht.radians("hello world")
+
     def test_arctan(self):
         # base elements
         elements = 30
@@ -149,11 +158,11 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.arctan([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.arctan('hello world')
+            ht.arctan("hello world")
 
     def test_arcsin(self):
         # base elements
-        elements = [-1., -0.83, -0.12, 0., 0.24, 0.67, 1.]
+        elements = [-1.0, -0.83, -0.12, 0.0, 0.24, 0.67, 1.0]
         comparison = torch.tensor(elements, dtype=torch.float64, device=device).asin()
 
         # arcsin of float32
@@ -162,15 +171,15 @@ class TestTrigonometrics(unittest.TestCase):
         self.assertIsInstance(float32_arcsin, ht.DNDarray)
         self.assertEqual(float32_arcsin.dtype, ht.float32)
         self.assertTrue(torch.allclose(float32_arcsin._DNDarray__array.double(), comparison))
-        
+
         # arcsin of float64
         float64_tensor = ht.array(elements, dtype=ht.float64)
         float64_arcsin = ht.arcsin(float64_tensor)
         self.assertIsInstance(float64_arcsin, ht.DNDarray)
         self.assertEqual(float64_arcsin.dtype, ht.float64)
         self.assertTrue(torch.allclose(float64_arcsin._DNDarray__array.double(), comparison))
-       
-        # arcsin of value out of domain 
+
+        # arcsin of value out of domain
         nan_tensor = ht.array([1.2])
         nan_arcsin = ht.arcsin(nan_tensor)
         self.assertIsInstance(float64_arcsin, ht.DNDarray)
@@ -181,11 +190,11 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.arcsin([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.arcsin('hello world')
+            ht.arcsin("hello world")
 
     def test_arccos(self):
         # base elements
-        elements = [-1., -0.83, -0.12, 0., 0.24, 0.67, 1.]
+        elements = [-1.0, -0.83, -0.12, 0.0, 0.24, 0.67, 1.0]
         comparison = torch.tensor(elements, dtype=torch.float64, device=device).acos()
 
         # arccos of float32
@@ -194,15 +203,15 @@ class TestTrigonometrics(unittest.TestCase):
         self.assertIsInstance(float32_arccos, ht.DNDarray)
         self.assertEqual(float32_arccos.dtype, ht.float32)
         self.assertTrue(torch.allclose(float32_arccos._DNDarray__array.double(), comparison))
-        
+
         # arccos of float64
         float64_tensor = ht.array(elements, dtype=ht.float64)
         float64_arccos = ht.arccos(float64_tensor)
         self.assertIsInstance(float64_arccos, ht.DNDarray)
         self.assertEqual(float64_arccos.dtype, ht.float64)
         self.assertTrue(torch.allclose(float64_arccos._DNDarray__array.double(), comparison))
-       
-        # arccos of value out of domain 
+
+        # arccos of value out of domain
         nan_tensor = ht.array([1.2])
         nan_arccos = ht.arccos(nan_tensor)
         self.assertIsInstance(float64_arccos, ht.DNDarray)
@@ -213,7 +222,7 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.arccos([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.arccos('hello world')
+            ht.arccos("hello world")
 
     def test_cos(self):
         # base elements
@@ -252,7 +261,7 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.cos([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.cos('hello world')
+            ht.cos("hello world")
 
     def test_cosh(self):
         # base elements
@@ -291,7 +300,7 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.cosh([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.cosh('hello world')
+            ht.cosh("hello world")
 
     def test_sin(self):
         # base elements
@@ -330,7 +339,7 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.sin([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.sin('hello world')
+            ht.sin("hello world")
 
     def test_sinh(self):
         # base elements
@@ -369,7 +378,7 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.sinh([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.sinh('hello world')
+            ht.sinh("hello world")
 
     def test_tan(self):
         # base elements
@@ -408,7 +417,7 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.tan([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.tan('hello world')
+            ht.tan("hello world")
 
     def test_tanh(self):
         # base elements
@@ -447,4 +456,4 @@ class TestTrigonometrics(unittest.TestCase):
         with self.assertRaises(TypeError):
             ht.tanh([1, 2, 3])
         with self.assertRaises(TypeError):
-            ht.tanh('hello world')
+            ht.tanh("hello world")
