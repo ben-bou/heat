@@ -307,7 +307,7 @@ class TestManipulations(unittest.TestCase):
             ht.concatenate((ht.zeros((12, 12)), ht.zeros((2, 2))), axis=0)
         with self.assertRaises(RuntimeError):
             ht.concatenate((ht.zeros((2, 2), split=0), ht.zeros((2, 2), split=1)), axis=0)
-"""
+
     def test_expand_dims(self):
         # vector data
         a = ht.arange(10)
@@ -424,7 +424,7 @@ class TestManipulations(unittest.TestCase):
             ht.empty((3, 4, 5,)).expand_dims(4)
         with self.assertRaises(ValueError):
             ht.empty((3, 4, 5,)).expand_dims(-5)
-
+"""
     def test_sort(self):
         size = ht.MPI_WORLD.size
         rank = ht.MPI_WORLD.rank
