@@ -1,4 +1,4 @@
-import numpy as np
+""" import numpy as np
 import torch
 import unittest
 import os
@@ -228,3 +228,4 @@ class TestTypeConversion(unittest.TestCase):
 
         with self.assertRaises(TypeError):
             ht.iinfo('int16')
+ """

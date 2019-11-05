@@ -1,4 +1,4 @@
-import operator
+""" import operator
 
 import torch
 import unittest
@@ -415,7 +415,7 @@ class TestArithmetics(unittest.TestCase):
             ht.ones(array_len).sum(axis='bad_axis_type')
 
     def test_right_hand_side_operations(self):
-        """
+        """"""
         This test ensures that for each arithmetic operation (e.g. +, -, *, ...) that is implemented in the tensor
         class, it works both ways.
 
@@ -425,7 +425,7 @@ class TestArithmetics(unittest.TestCase):
         >>> T = ht.float32([[1., 2.], [3., 4.]])
         >>> assert T * 3 == 3 * T
 
-        """
+        """"""
         operators = (
             ('__add__', operator.add, True),
             ('__sub__', operator.sub, False),
@@ -448,3 +448,4 @@ class TestArithmetics(unittest.TestCase):
             if commutative:
                 self.assertTrue(ht.equal(res_1, res_2))
         # TODO: Test with split tensors when binary operations are working properly for split tensors
+ """
