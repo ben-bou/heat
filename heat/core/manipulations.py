@@ -427,7 +427,7 @@ def sort(a, axis=None, descending=False, out=None):
         pivot_dim[0] = size * sum([1 for x in counts if x > 0])
 
         # share the local pivots with root process
-        pivot_buffer = torch.empty(pivot_dim, dtype=a.dtype.torch_type())
+        pivot_buffer = torch.empty(pivot_dim, dtype=a.dtype.torch_type(), device=a.device.torch_device)
         a.comm.Gatherv(local_pivots, (pivot_buffer, gather_counts, gather_displs), root=0)
 
         pivot_dim[0] = size - 1
