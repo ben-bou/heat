@@ -12,6 +12,7 @@ else:
     ht.use_device("cpu")
 
 class TestManipulations(unittest.TestCase):
+    """
     def test_concatenate(self):
         # cases to test:
         # Matrices / Vectors
@@ -307,7 +308,7 @@ class TestManipulations(unittest.TestCase):
             ht.concatenate((ht.zeros((12, 12)), ht.zeros((2, 2))), axis=0)
         with self.assertRaises(RuntimeError):
             ht.concatenate((ht.zeros((2, 2), split=0), ht.zeros((2, 2), split=1)), axis=0)
-
+    """
     def test_expand_dims(self):
         # vector data
         a = ht.arange(10)
