@@ -26,7 +26,7 @@ class TestArithmetics(unittest.TestCase):
 
         cls.a_tensor = ht.array([[1.0, 2.0], [3.0, 4.0]])
         cls.another_tensor = ht.array([[2.0, 2.0], [2.0, 2.0]])
-        cls.a_split_tensor = cls.another_tensor.copy().resplit(0)
+        cls.a_split_tensor = cls.another_tensor.copy().resplit_(0)
 
         cls.errorneous_type = (2, 2)
 
