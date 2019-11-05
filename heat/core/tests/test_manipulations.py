@@ -130,7 +130,7 @@ class TestManipulations(unittest.TestCase):
         for i in range(2):
             lshape[i] = chk[i].stop - chk[i].start
         self.assertEqual(res.lshape, tuple(lshape))
-"""
+
         # =============================================
         x = ht.zeros((16, 15), split=0)
         y = ht.ones((16, 15), split=0)
@@ -307,7 +307,7 @@ class TestManipulations(unittest.TestCase):
             ht.concatenate((ht.zeros((12, 12)), ht.zeros((2, 2))), axis=0)
         with self.assertRaises(RuntimeError):
             ht.concatenate((ht.zeros((2, 2), split=0), ht.zeros((2, 2), split=1)), axis=0)
-
+"""
     def test_expand_dims(self):
         # vector data
         a = ht.arange(10)
