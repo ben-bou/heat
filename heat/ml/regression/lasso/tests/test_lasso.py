@@ -1,4 +1,4 @@
-""" import os
+import os
 import unittest
 import numpy as np
 import torch
@@ -119,5 +119,3 @@ class TestLasso(unittest.TestCase):
         # check whether the results are correct
         self.assertIsInstance(yest, np.ndarray)
         self.assertEqual(yest.shape, (m,))
-    
- """

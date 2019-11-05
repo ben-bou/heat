@@ -1,4 +1,4 @@
-""" import unittest
+import unittest
 import torch
 import heat as ht
 import numpy as np
@@ -676,4 +676,3 @@ class TestManipulations(unittest.TestCase):
         data_split_zero = ht.array(torch_array, split=0)
         res, inv = ht.unique(data_split_zero, return_inverse=True, sorted=True)
         self.assertTrue(torch.equal(inv, exp_inv.to(dtype=inv.dtype)))
- """
