@@ -530,7 +530,7 @@ class TestManipulations(unittest.TestCase):
             for idx in range(c - 1):
                 if rank == i:
                     self.assertTrue(torch.lt(result._DNDarray__array[idx], result._DNDarray__array[idx + 1]).all())
-"""
+
     def test_squeeze(self):
         torch.manual_seed(1)
         data = ht.random.randn(1, 4, 5, 1)
@@ -677,4 +677,3 @@ class TestManipulations(unittest.TestCase):
         data_split_zero = ht.array(torch_array, split=0)
         res, inv = ht.unique(data_split_zero, return_inverse=True, sorted=True)
         self.assertTrue(torch.equal(inv, exp_inv.to(dtype=inv.dtype)))
-        """

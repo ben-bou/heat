@@ -1,4 +1,4 @@
-""" import numpy as np
+import numpy as np
 import os
 import tempfile
 import torch
@@ -404,4 +404,3 @@ class TestIO(unittest.TestCase):
             ht.save_netcdf(data, 1, self.NETCDF_VARIABLE)
         with self.assertRaises(TypeError):
             ht.save_netcdf(data, self.NETCDF_PATH, 1)
- """

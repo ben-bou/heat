@@ -1,4 +1,4 @@
-""" import unittest
+import unittest
 import os
 import heat as ht
 
@@ -52,4 +52,3 @@ class TestDevices(unittest.TestCase):
             ht.use_device('fpu')
         with self.assertRaises(ValueError):
             ht.use_device(1)
- """
