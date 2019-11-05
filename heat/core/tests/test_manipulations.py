@@ -86,7 +86,7 @@ class TestManipulations(unittest.TestCase):
         for i in range(2):
             lshape[i] = chk[i].stop - chk[i].start
         self.assertEqual(res.lshape, tuple(lshape))
-"""
+
         # # =============================================
         # # 0 None 0
         x = ht.zeros((16, 15), split=0)
@@ -130,7 +130,7 @@ class TestManipulations(unittest.TestCase):
         for i in range(2):
             lshape[i] = chk[i].stop - chk[i].start
         self.assertEqual(res.lshape, tuple(lshape))
-
+"""
         # =============================================
         x = ht.zeros((16, 15), split=0)
         y = ht.ones((16, 15), split=0)
