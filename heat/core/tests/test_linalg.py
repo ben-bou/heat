@@ -20,8 +20,8 @@ class TestLinalg(unittest.TestCase):
         data3d = np.ones((10, 10, 10))
         data1d = np.arange(10)
 
-        a1d = ht.array(data1d, dtype=ht.int32, split=0)
-        b1d = ht.array(data1d, dtype=ht.int32, split=0)
+        a1d = ht.array(data1d, dtype=ht.float64, split=0)
+        b1d = ht.array(data1d, dtype=ht.float64, split=0)
         # 2 1D arrays,
         self.assertEqual(ht.dot(a1d, b1d), np.dot(data1d, data1d))
         ret = []
