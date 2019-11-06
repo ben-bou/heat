@@ -13,7 +13,6 @@ else:
 
 
 class TestLinalg(unittest.TestCase):
-    """
     def test_dot(self):
         # ONLY TESTING CORRECTNESS! ALL CALLS IN DOT ARE PREVIOUSLY TESTED
         # cases to test:
@@ -60,7 +59,6 @@ class TestLinalg(unittest.TestCase):
 
         with self.assertRaises(NotImplementedError):
             ht.dot(ht.array(data3d), ht.array(data1d))
-    """
 
     def test_matmul(self):
         with self.assertRaises(ValueError):
