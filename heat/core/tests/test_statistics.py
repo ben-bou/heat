@@ -54,21 +54,20 @@ class TestStatistics(unittest.TestCase):
         # 2D split tensor, along the axis
         data = ht.array(ht.random.randn(4, 5), is_split=0)
         result = ht.argmax(data, axis=1)
-        # expected = torch.argmax(data._DNDarray__array, dim=1)
+        expected = torch.argmax(data._DNDarray__array, dim=1)
         self.assertIsInstance(result, ht.DNDarray)
         self.assertEqual(result.dtype, ht.int64)
         self.assertEqual(result._DNDarray__array.dtype, torch.int64)
         self.assertEqual(result.shape, (ht.MPI_WORLD.size * 4,))
         self.assertEqual(result.lshape, (4,))
         self.assertEqual(result.split, 0)
+        print(result, expected)
         if torch.cuda.is_available() and result.device == ht.gpu:
             self.assertTrue(
                 (result._DNDarray__array == torch.tensor([1, 2, 1, 2], device=device)).all()
             )
         else:
-            self.assertTrue(
-                (result._DNDarray__array == torch.tensor([4, 4, 2, 4], device=device)).all()
-            )
+            self.assertTrue((result._DNDarray__array == expected).all())
 
         # 2D split tensor, across the axis
         size = ht.MPI_WORLD.size * 2
@@ -163,21 +162,20 @@ class TestStatistics(unittest.TestCase):
         # 2D split tensor, along the axis
         data = ht.array(ht.random.randn(4, 5), is_split=0)
         result = ht.argmin(data, axis=1)
-        # expected = torch.argmin(data._DNDarray__array, dim=1)
+        expected = torch.argmin(data._DNDarray__array, dim=1)
         self.assertIsInstance(result, ht.DNDarray)
         self.assertEqual(result.dtype, ht.int64)
         self.assertEqual(result._DNDarray__array.dtype, torch.int64)
         self.assertEqual(result.shape, (ht.MPI_WORLD.size * 4,))
         self.assertEqual(result.lshape, (4,))
         self.assertEqual(result.split, 0)
+        print(result, expected)
         if torch.cuda.is_available() and result.device == ht.gpu:
             self.assertTrue(
                 (result._DNDarray__array == torch.tensor([3, 4, 2, 3], device=device)).all()
             )
         else:
-            self.assertTrue(
-                (result._DNDarray__array == torch.tensor([3, 1, 1, 3], device=device)).all()
-            )
+            self.assertTrue((result._DNDarray__array == expected).all())
 
         # 2D split tensor, across the axis
         size = ht.MPI_WORLD.size * 2

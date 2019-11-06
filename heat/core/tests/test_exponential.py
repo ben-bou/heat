@@ -53,7 +53,7 @@ class TestExponential(unittest.TestCase):
             ht.exp("hello world")
 
         # Tests with split
-        expected = torch.arange(10, dtype=torch.float32).exp()
+        expected = torch.arange(10, dtype=torch.float32, device=device).exp()
         actual = ht.arange(10, split=0, dtype=ht.float32).exp()
         self.assertEqual(actual.gshape, tuple(expected.shape))
         self.assertEqual(actual.split, 0)
