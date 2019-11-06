@@ -61,13 +61,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (ht.MPI_WORLD.size * 4,))
         self.assertEqual(result.lshape, (4,))
         self.assertEqual(result.split, 0)
-        print(result, expected)
-        if torch.cuda.is_available() and result.device == ht.gpu:
-            self.assertTrue(
-                (result._DNDarray__array == torch.tensor([1, 2, 1, 2], device=device)).all()
-            )
-        else:
-            self.assertTrue((result._DNDarray__array == expected).all())
+        self.assertTrue((result._DNDarray__array == expected).all())
 
         # 2D split tensor, across the axis
         size = ht.MPI_WORLD.size * 2
@@ -169,13 +163,7 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (ht.MPI_WORLD.size * 4,))
         self.assertEqual(result.lshape, (4,))
         self.assertEqual(result.split, 0)
-        print(result, expected)
-        if torch.cuda.is_available() and result.device == ht.gpu:
-            self.assertTrue(
-                (result._DNDarray__array == torch.tensor([3, 4, 2, 3], device=device)).all()
-            )
-        else:
-            self.assertTrue((result._DNDarray__array == expected).all())
+        self.assertTrue((result._DNDarray__array == expected).all())
 
         # 2D split tensor, across the axis
         size = ht.MPI_WORLD.size * 2
