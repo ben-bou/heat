@@ -65,7 +65,7 @@ class TestRandom(unittest.TestCase):
         ht.random.seed(seed)
         b = ht.random.rand(100, split=None)
         a = a.numpy().flatten()
-        b = b._DNDarray__array.numpy()
+        b = b._DNDarray__array.cpu().numpy()
         self.assertTrue(np.array_equal(a, b))
 
         # On different shape and split the same random values are used
