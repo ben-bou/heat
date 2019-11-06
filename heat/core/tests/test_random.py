@@ -124,7 +124,7 @@ class TestRandom(unittest.TestCase):
         ht.random.seed(9876)
         b = ht.random.rand(np.prod(shape), dtype=ht.float32, comm=ht.MPI_WORLD)
         a = a.numpy().flatten()
-        b = b._DNDarray__array.numpy()
+        b = b._DNDarray__array.cpu().numpy()
         self.assertTrue(np.array_equal(a, b))
         self.assertEqual(a.dtype, np.float32)
 
