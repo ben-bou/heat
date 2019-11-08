@@ -20,21 +20,16 @@ class TestLinalg(unittest.TestCase):
         data3d = np.ones((10, 10, 10))
         data1d = np.arange(10)
 
-        print(
-            torch.dot(
-                torch.tensor([2, 3]).to(device).float(), torch.tensor([2, 1]).to(device).float()
-            )
-        )
+        a1d = ht.array(data1d, dtype=ht.float32, split=0)
+        b1d = ht.array(data1d, dtype=ht.float32, split=0)
 
-        a1d = ht.array(data1d, split=0)
-        b1d = ht.array(data1d, split=0)
         # 2 1D arrays,
         self.assertEqual(ht.dot(a1d, b1d), np.dot(data1d, data1d))
         ret = []
         self.assertEqual(ht.dot(a1d, b1d, out=ret), np.dot(data1d, data1d))
 
-        a1d = ht.array(data1d, split=None)
-        b1d = ht.array(data1d, split=0)
+        a1d = ht.array(data1d, dtype=ht.float32, split=None)
+        b1d = ht.array(data1d, dtype=ht.float32, split=0)
         # 2 1D arrays,
         self.assertEqual(ht.dot(a1d, b1d), np.dot(data1d, data1d))
 
