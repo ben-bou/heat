@@ -20,7 +20,7 @@ class TestLinalg(unittest.TestCase):
         data3d = np.ones((10, 10, 10))
         data1d = np.arange(10)
 
-        torch.dot(torch.tensor([2, 3], device=device), torch.tensor([2, 1], device=device))
+        torch.dot(torch.randn(10).to("cuda"), torch.randn(10).to("cuda"))
 
         a1d = ht.array(data1d, split=0)
         b1d = ht.array(data1d, split=0)
