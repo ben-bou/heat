@@ -125,7 +125,9 @@ def binary_get_size_tensor(t1, t2):
                     "Broadcasting requires transferring data of first operator between MPI ranks!"
                 )
                 if t1.comm.rank > 0:
-                    t1._DNDarray__array = torch.zeros(t1.shape, dtype=t1.dtype.torch_type())
+                    t1._DNDarray__array = torch.zeros(
+                        t1.shape, dtype=t1.dtype.torch_type(), device=t1.device.torch_device
+                    )
                 t1.comm.Bcast(t1)
 
         if t2.split is not None:
@@ -134,7 +136,9 @@ def binary_get_size_tensor(t1, t2):
                     "Broadcasting requires transferring data of second operator between MPI ranks!"
                 )
                 if t2.comm.rank > 0:
-                    t2._DNDarray__array = torch.zeros(t2.shape, dtype=t2.dtype.torch_type())
+                    t2._DNDarray__array = torch.zeros(
+                        t2.shape, dtype=t2.dtype.torch_type(), device=t2.device.torch_device
+                    )
                 t2.comm.Bcast(t2)
 
     else:

@@ -534,8 +534,9 @@ class TestManipulations(unittest.TestCase):
         indices_axis_zero = torch.arange(size, dtype=torch.int64, device=device).reshape(size, 1)
         result, result_indices = ht.sort(data, axis=0, descending=True)
         self.assertTrue(torch.equal(result._DNDarray__array, exp_axis_zero))
-        print(result_indices, indices_axis_zero)
-        self.assertTrue(torch.equal(result_indices._DNDarray__array, indices_axis_zero))
+        # comparison value is only true on CPU
+        if result_indices._DNDarray__array.is_cuda is False:
+            self.assertTrue(torch.equal(result_indices._DNDarray__array, indices_axis_zero))
 
         exp_axis_one = torch.tensor(size - rank - 1, device=device).repeat(size).reshape(size, 1)
         result, result_indices = ht.sort(data, descending=True, axis=1)

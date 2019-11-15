@@ -546,7 +546,6 @@ class TestArithmetics(unittest.TestCase):
         >>> import heat as ht
         >>> T = ht.float32([[1., 2.], [3., 4.]])
         >>> assert T * 3 == 3 * T
-
         """
         operators = (
             ("__add__", operator.add, True),

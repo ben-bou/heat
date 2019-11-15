@@ -74,14 +74,8 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (size,))
         self.assertEqual(result.lshape, (size,))
         self.assertEqual(result.split, None)
-        if torch.cuda.is_available() and result.device == ht.gpu and size < 3:
-            self.assertTrue(
-                (
-                    result._DNDarray__array
-                    == torch.tensor([x % size for x in range(1, size + 1)], device=device)
-                ).all()
-            )
-        else:
+        # skip test on gpu; argmax works different
+        if result.device != ht.gpu:
             self.assertTrue((result._DNDarray__array != 0).all())
 
         # 2D split tensor, across the axis, output tensor
@@ -97,14 +91,8 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(output.shape, (size,))
         self.assertEqual(output.lshape, (size,))
         self.assertEqual(output.split, None)
-        if torch.cuda.is_available() and output.device == ht.gpu and size < 3:
-            self.assertTrue(
-                (
-                    output._DNDarray__array
-                    == torch.tensor([x % size for x in range(1, size + 1)], device=device)
-                ).all()
-            )
-        else:
+        # skip test on gpu; argmax works different
+        if output.device != ht.gpu:
             self.assertTrue((output._DNDarray__array != 0).all())
 
         # check exceptions
@@ -176,9 +164,8 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(result.shape, (size,))
         self.assertEqual(result.lshape, (size,))
         self.assertEqual(result.split, None)
-        if torch.cuda.is_available() and result.device == ht.gpu and size < 3:
-            self.assertTrue((result._DNDarray__array == torch.arange(0, size, device=device)).all())
-        else:
+        # skip test on gpu; argmin works different
+        if result.device != ht.gpu:
             self.assertTrue((result._DNDarray__array != 0).all())
 
         # 2D split tensor, across the axis, output tensor
@@ -194,9 +181,8 @@ class TestStatistics(unittest.TestCase):
         self.assertEqual(output.shape, (size,))
         self.assertEqual(output.lshape, (size,))
         self.assertEqual(output.split, None)
-        if torch.cuda.is_available() and output.device == ht.gpu and size < 3:
-            self.assertTrue((output._DNDarray__array == torch.arange(0, size, device=device)).all())
-        else:
+        # skip test on gpu; argmin works different
+        if output.device != ht.gpu:
             self.assertTrue((output._DNDarray__array != 0).all())
 
         # check exceptions
@@ -457,7 +443,7 @@ class TestStatistics(unittest.TestCase):
         if size > 1:
             a = ht.arange(size - 1, split=0)
             res = ht.max(a)
-            expected = torch.tensor([size - 2], dtype=a.dtype.torch_type())
+            expected = torch.tensor([size - 2], dtype=a.dtype.torch_type(), device=device)
             self.assertTrue(torch.equal(res._DNDarray__array, expected))
 
         # check exceptions
@@ -708,7 +694,7 @@ class TestStatistics(unittest.TestCase):
         if size > 1:
             a = ht.arange(size - 1, split=0)
             res = ht.min(a)
-            expected = torch.tensor([0], dtype=a.dtype.torch_type())
+            expected = torch.tensor([0], dtype=a.dtype.torch_type(), device=device)
             self.assertTrue(torch.equal(res._DNDarray__array, expected))
 
         # check exceptions
