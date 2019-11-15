@@ -556,7 +556,7 @@ class TestManipulations(unittest.TestCase):
 
         data = ht.array(tensor, split=0)
         exp_axis_zero = torch.tensor([[2, 3, 0], [0, 2, 3]], dtype=torch.int32, device=device)
-        if torch.cuda.is_available() and data.device == ht.gpu:
+        if torch.cuda.is_available() and data.device == ht.gpu and size < 4:
             indices_axis_zero = torch.tensor(
                 [[0, 2, 2], [3, 2, 0]], dtype=torch.int32, device=device
             )
