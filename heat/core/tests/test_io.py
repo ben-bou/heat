@@ -245,9 +245,16 @@ class TestIO(unittest.TestCase):
             # indexing netcdf file: single index
             zeros = ht.zeros((20, 1, 20, 2), device=ht_device)
             zeros.save(self.NETCDF_OUT_PATH, self.NETCDF_VARIABLE, mode="w")
-            ones = ht.ones(20, device=ht_device)
+            ones = ht.ones(20, split=0, device=ht_device)
             indices = (-1, 0, slice(None), 1)
-            ones.save(self.NETCDF_OUT_PATH, self.NETCDF_VARIABLE, mode="r+", file_slices=indices)
+            print("begin single-index", ht.MPI_WORLD.rank, flush=True)
+            ones.save(
+                self.NETCDF_OUT_PATH,
+                self.NETCDF_VARIABLE,
+                mode="r+",
+                file_slices=indices,
+                debug=True,
+            )
             if split_range.comm.rank == 0:
                 with ht.io.nc.Dataset(self.NETCDF_OUT_PATH, "r") as handle:
                     comparison = torch.tensor(
@@ -259,8 +266,9 @@ class TestIO(unittest.TestCase):
             small_range_split = ht.arange(10, split=0, device=ht_device)
             small_range = ht.arange(10, device=ht_device)
             indices = [[0, 9, 5, 2, 1, 3, 7, 4, 8, 6]]
+            print("begin multi-index", ht.MPI_WORLD.rank, flush=True)
             small_range_split.save(
-                self.NETCDF_OUT_PATH, self.NETCDF_VARIABLE, mode="w", file_slices=indices
+                self.NETCDF_OUT_PATH, self.NETCDF_VARIABLE, mode="w", file_slices=indices,
             )
             if split_range.comm.rank == 0:
                 with ht.io.nc.Dataset(self.NETCDF_OUT_PATH, "r") as handle:

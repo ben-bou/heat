@@ -317,6 +317,7 @@ else:
         dimension_names=None,
         is_unlimited=False,
         file_slices=slice(None),
+        debug=False,
         **kwargs
     ):
         """
@@ -400,7 +401,6 @@ else:
                 for name, elements in zip(dimension_names, data.shape):
                     if name not in handle.dimensions:
                         handle.createDimension(name, elements if not is_unlimited else None)
-
                 if variable in handle.variables:
                     var = handle.variables[variable]
                 else:
@@ -418,7 +418,10 @@ else:
                 start, count, stride = start.T, count.T, stride.T  # transpose for iteration
                 stop = start + stride * count
                 new_slices = []
-
+                if debug:
+                    print(
+                        MPI_WORLD.rank, "count", count.squeeze(), flush=True,
+                    )
                 htSlices = list(slices)
                 shape_index = 0
                 for i in range(count.shape[0]):  # append fixed dimensions to heat slices
@@ -429,7 +432,8 @@ else:
                     else:
                         shape_index += 1
                 htSlices = tuple(htSlices)
-
+                if debug:
+                    print(MPI_WORLD.rank, "expanded slices", htSlices, flush=True)
                 for begin, end, step, htSlice in zip(start, stop, stride, htSlices):
                     if begin.size == 1:
                         begin, end, step = begin.item(), end.item(), step.item()
@@ -468,6 +472,19 @@ else:
                             slice(b.item(), e.item(), s.item()) for b, e, s in zip(begin, end, step)
                         )
                         new_slices.append(np.r_[ranges][htSlice])
+                if debug:
+                    print(
+                        MPI_WORLD.rank,
+                        "begin nc call",
+                        new_slices,
+                        "\t",
+                        slices,
+                        "\ncompare shapes: ncVar",
+                        var[tuple(new_slices)].shape,
+                        "\t data",
+                        data._DNDarray__array.shape,
+                        flush=True,
+                    )
                 try:
                     var[tuple(new_slices)] = (
                         data._DNDarray__array.cpu()
@@ -475,6 +492,8 @@ else:
                         else data._DNDarray__array[slices].cpu()
                     )
                 except RuntimeError:
+                    if debug:
+                        print(MPI_WORLD.rank, "received runtimeError", flush=True)
                     var.set_collective(True)
                     var[tuple(new_slices)] = (
                         data._DNDarray__array.cpu()
